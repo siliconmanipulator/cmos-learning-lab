@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="bn-Latn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Learn CMOS transistors and explore their 3D layout."><title>CMOS Learning Lab</title><link rel="stylesheet" href="app.css"></head><body>
+<section id="cmos-learning-lab">
+<style>
+#cmos-learning-lab { display:grid; gap:calc(var(--font-size-base)*0.75); }
+#cmos-learning-lab .visual { position:relative; height:410px; }
+#cmos-learning-lab .visual canvas,#cmos-learning-lab .visual svg { position:absolute; inset:0; width:100%; height:100%; }
+#cmos-learning-lab .visual canvas { touch-action:none; }
+#cmos-learning-lab .visual svg { overflow:visible; pointer-events:none; }
+#cmos-learning-lab .density { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; padding:1rem 0; }
+#cmos-learning-lab .sample { display:grid; gap:0.4rem; text-align:center; }
+#cmos-learning-lab .sample svg { width:100%; height:140px; }
+#cmos-learning-lab .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.8rem; }
+#cmos-learning-lab .fields label { display:grid; gap:0.25rem; min-width:0; }
+#cmos-learning-lab .detail { min-height:3.2em; }
+#cmos-learning-lab .legend { display:flex; gap:1rem; flex-wrap:wrap; }
+#cmos-learning-lab .swatch { width:0.8em; height:0.8em; display:inline-block; margin-right:0.3em; }
+#cmos-learning-lab .p { background:var(--viz-series-2,var(--purple)); }
+#cmos-learning-lab .n { background:var(--viz-series-3,var(--green)); }
+#cmos-learning-lab .wire { background:var(--viz-series-1,var(--blue)); }
+#cmos-learning-lab .gate { background:var(--viz-series-4,var(--red)); }
+#cmos-learning-lab .channel-reveal { animation:cmos-channel 900ms ease-out both; transform-box:fill-box; transform-origin:left; }
+@keyframes cmos-channel { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+@media(prefers-reduced-motion:reduce) { #cmos-learning-lab .channel-reveal { animation:none; } }
+@media(max-width:480px) {
+ #cmos-learning-lab .density { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ #cmos-learning-lab .sample svg { height:105px; }
+ #cmos-learning-lab .fields { grid-template-columns:1fr; }
+ #cmos-learning-lab .visual { height:390px; }
+}
+</style>
+<div><h2>Silicon theke CMOS inverter</h2><span class="text-small text-muted">Shekhar model · dimensions ar doping-er ratio scale-e dekhano hoyni</span></div>
+<div class="viz-row"><button class="btn" data-guide="start">Start here</button><button class="btn" data-guide="next">Next lesson →</button><span data-guide-note>p / n / + → NMOS → PMOS → Inverter</span></div>
+<div class="viz-row" aria-label="Learning views">
+<button class="btn" type="button" data-mode="doping" aria-pressed="true">1 · p / n / +</button>
+<button class="btn" type="button" data-mode="nmos" aria-pressed="false">2 · NMOS</button>
+<button class="btn" type="button" data-mode="pmos" aria-pressed="false">3 · PMOS</button>
+<button class="btn" type="button" data-mode="inverter" aria-pressed="false">4 · Inverter 3D</button>
+</div>
+<div data-panel="doping">
+<div class="density"></div>
+<div class="viz-row"><span>Dot = doping-er poriman</span><span>Kom dot → kom doping</span><span>Beshi dot → beshi doping</span></div>
+</div>
+<div class="viz-row" data-views><button class="btn" data-view="3d">3D construction</button><button class="btn" data-view="layout">Layout build · top</button><button class="btn" data-view="operation">Voltage lab · side view</button><button class="btn" data-view="cross">S / D / G / B close-up</button></div>
+<section data-operation hidden></section>
+<div class="visual" data-panel="visual" hidden>
+<canvas class="cursor-interaction" aria-label="Drag to rotate the three-dimensional CMOS inverter; view buttons provide keyboard alternatives"></canvas>
+<svg role="img" aria-label="MOSFET cross section"></svg>
+</div>
+<div class="viz-row" data-panel="device" hidden>
+<span>Gate input</span>
+<button class="btn" type="button" data-input="0" aria-pressed="true">0 · LOW</button>
+<button class="btn" type="button" data-input="1" aria-pressed="false">1 · HIGH</button>
+<span data-output aria-live="polite"></span>
+</div>
+<div class="viz-row" data-panel="terminals" hidden aria-label="Inspect transistor terminal">
+<button class="btn" type="button" data-terminal="S" aria-pressed="false">S · Source</button>
+<button class="btn" type="button" data-terminal="D" aria-pressed="false">D · Drain</button>
+<button class="btn" type="button" data-terminal="G" aria-pressed="false">G · Gate</button>
+<button class="btn" type="button" data-terminal="B" aria-pressed="false">B · Body</button>
+</div>
+<div data-panel="three" hidden>
+<div class="viz-row" aria-label="Visible parts">
+<label class="form-label">Device <select class="form-select" data-device><option value="all">Both</option><option value="pmos">PMOS only</option><option value="nmos">NMOS only</option></select></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="markers"><span>Markers</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="body" checked><span>Body / well</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="gate" checked><span>Gate / oxide</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="contacts" checked><span>Contacts</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="metal" checked><span>Metal</span></label>
+</div>
+<div class="viz-row">
+<button type="button" class="btn btn-primary" data-action="play">Build animation</button>
+<button type="button" class="btn" data-action="iso">3D</button>
+<button type="button" class="btn" data-action="top">Top</button>
+<button type="button" class="btn" data-action="side">Side</button>
+<label class="form-check"><input class="form-check-input" type="checkbox" data-cut checked><span class="form-check-label">Cutaway · bhitor dekho</span></label>
+</div>
+<div class="fields">
+<label class="form-label">Build step<select class="form-select" data-step>
+<option value="0">1 · p-type silicon</option><option value="1">2 · Embedded n-well</option>
+<option value="2">3 · P+ source / drain</option><option value="3">4 · N+ source / drain</option>
+<option value="4">5 · Insulator + common gate</option><option value="5">6 · Body contacts</option>
+<option value="6">7 · Contact stack</option><option value="7" selected>8 · Metal + inverter</option>
+</select></label>
+<label class="form-label">Inspect<select class="form-select" data-inspect>
+<option value="all">Puro inverter</option><option value="well">PMOS body · n-well</option>
+<option value="substrate">NMOS body · p-substrate</option><option value="ps">PMOS source</option>
+<option value="pd">PMOS drain</option><option value="ns">NMOS source</option><option value="nd">NMOS drain</option>
+<option value="poly">Gate · poly</option><option value="oxide">Gate oxide</option>
+<option value="ntap">N+ body tap</option><option value="ptap">P+ body tap</option>
+<option value="contact">Licon → LI1 → mcon</option><option value="metal">Metal 1</option>
+</select></label>
+<label class="form-label">Upper-layer separation<input class="form-range" type="range" min="0" max="1" value="0" step="0.01" data-spread></label>
+<label class="form-label">Zoom<input class="form-range" type="range" min="0.75" max="1.6" value="1" step="0.01" data-zoom></label>
+</div>
+</div>
+<div class="legend text-small" data-panel="legend" hidden>
+<span><i class="swatch" style="background:#f1d9f3"></i>p body · kom doping</span><span><i class="swatch" style="background:#c4eddf"></i>n well · kom doping</span><span><i class="swatch" style="background:#a6359a"></i>p+ · beshi doping</span><span><i class="swatch" style="background:#087e68"></i>n+ · beshi doping</span>
+<span><i class="swatch gate"></i>Gate poly</span><span><i class="swatch wire"></i>Metal</span>
+</div>
+<div class="detail" aria-live="polite"></div>
+<details data-lessons open><summary>Connections ar current path · hide/show</summary>
+<div class="viz-row"><button class="btn" data-net="all">All nets</button><button class="btn" data-net="A">A · gate</button><button class="btn" data-net="Y">Y · drain</button><button class="btn" data-net="VDD">VDD</button><button class="btn" data-net="VSS">VSS</button><button class="btn" data-net="body">Body → tap → supply</button><button class="btn" data-net="flow">ON path</button></div>
+<svg data-schematic viewBox="0 0 600 190" role="img" aria-label="Clickable simplified transistor connection diagram"></svg><p data-flow></p>
+</details>
+<details data-closeup><summary>Gate kivabe channel banay? · zoom</summary><div class="viz-row"><button class="btn" data-field-device="nmos">NMOS</button><button class="btn" data-field-device="pmos">PMOS</button></div><svg data-field viewBox="0 0 600 210" role="img" aria-label="Gate field and channel close-up"></svg><p data-field-note></p></details>
+<details><summary>Contact-er siri · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#c4eddf" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — lomba connection</text><text x="300" y="73">4 · mcon — LI1 theke M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly theke LI1</text><text x="300" y="175">1 · doped silicon ba poly</text></g></svg><p>Contact holo insulating layer-er moddhe conductive bridge. M1-er upor M2 jete via1 lage; ei model M1-e shesh. Gate contact active channel-er baire poly extension-e.</p></details>
+<details><summary>Real Magic layout-er sathe milao</summary><p>Ei app-er rong teaching-er jonno. Magic-er rong technology file-er upor depend kore. Nicher original screenshot-e N-WELL, pdiff, ndiff, Poly ar metal1 label kora ache. Chhobi click korle boro hobe.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>App-e</th><th>Magic-e identify korbe</th></tr><tr><td>Halka n-well</td><td>PMOS-er charpasher well enclosure</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; poly cross korle transistor</td></tr><tr><td>Gate</td><td>Diffusion-er upor diye jawa poly strip</td></tr><tr><td>Blue wiring</td><td>Metal 1; contact diye diffusion/poly-te jukto</td></tr></table><p>Build order-ta bojhanor sequence, fab-er manufacturing recipe noy. Isolation (STI), dielectric, exact implants ar design rules ekhane simplified. Real layout-e DRC/LVS lagbe.</p></details>
+<span class="text-small text-muted" data-note></span>
+</section>
+<script src="operation.js"></script>
+<script>
+(() => {
+  const root=document.getElementById('cmos-learning-lab');
+  const $=selector=>root.querySelector(selector);
+  const $$=selector=>[...root.querySelectorAll(selector)];
+  const svg=$('.visual svg'),canvas=$('canvas'),visual=$('.visual');
+  const state={mode:'inverter',input:0,terminal:'',step:7,inspect:'all',cut:true,spread:0,zoom:1,yaw:-0.35,pitch:0.8,
+    view:'3d',net:'all',fieldDevice:'nmos',device:'all',markers:false,body:true,gate:true,contacts:true,metal:true};
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const ns='http://www.w3.org/2000/svg';
+  let palette={},timer=null,gl=null,program=null,buffer=null,vertices=[],boxes=[];
+  const explanations={
+    all:'Drag kore ghorao. Kata mukh-e dekho — n-well ar source/drain silicon-er bhitore.',
+    well:'B = PMOS-er body. Ei halka n-type region-ta p-substrate-er bhitore. N+ tap diye VDD-te jukto.',
+    substrate:'B = NMOS-er body. Ei halka p-type silicon-er moddhei NMOS. P+ tap diye VSS-te jukto.',
+    ps:'PMOS-er S = source. Eta heavily doped P+ silicon, VDD-te connected.',
+    pd:'PMOS-er D = drain. Etao P+ silicon. NMOS drain-er sathe jure output Y hoy.',
+    ns:'NMOS-er S = source. Eta heavily doped N+ silicon, VSS-te connected.',
+    nd:'NMOS-er D = drain. Etao N+ silicon. PMOS drain-er sathe jure output Y hoy.',
+    poly:'G = gate. Poly duita gate-ke A input-e jore. Gate oxide gate-ke silicon theke electrically alada rakhe.',
+    oxide:'Gate oxide ekta patla insulator. Gate-er electric field nicher channel control kore.',
+    ntap:'N+ tap holo n-well body-r contact. Tap theke contact stack ar metal diye VDD-te jay.',
+    ptap:'P+ tap holo p-substrate body-r contact. Tap theke contact stack ar metal diye VSS-te jay.',
+    contact:'Silicon/poly → licon → local interconnect (LI1) → mcon → Metal 1.',
+    metal:'VDD → PMOS source/body; VSS → NMOS source/body; A → duita gate; Y → duita drain.'
+  };
+  const buildDescriptions=[
+    'Shuru holo p-type silicon diye. Ei silicon-i NMOS-er body hobe.',
+    'Silicon-er ekta bhitorer region n-type kora holo. Ei n-well PMOS-er body.',
+    'N-well-er surface-e duita P+ region — PMOS-er source ar drain.',
+    'P-body-r surface-e duita N+ region — NMOS-er source ar drain.',
+    'Patla oxide-er upor poly gate. Eki poly duita gate-ke input A-te jore.',
+    'N-well-e N+ tap, p-body-te P+ tap. Ekhane diye body-r supply connection hobe.',
+    'Contact stack diye silicon/poly theke upor-er Metal 1-e otha jay.',
+    'VDD → PMOS source/body; VSS → NMOS source/body; A → gate; duita drain → Y.'
+  ];
+  function restore(saved) {
+    if(!saved||saved.version!==2)return;
+    if(['doping','nmos','pmos','inverter'].includes(saved.mode))state.mode=saved.mode;
+    for(const key of ['input','step','spread','zoom','yaw','pitch'])if(Number.isFinite(saved[key]))state[key]=saved[key];
+    state.input=state.input?1:0;state.step=clamp(Math.round(state.step),0,7);
+    state.spread=clamp(state.spread,0,1);state.zoom=clamp(state.zoom,0.75,1.6);state.pitch=clamp(state.pitch,0.12,Math.PI/2);
+    if(typeof saved.cut==='boolean')state.cut=saved.cut;
+    if(explanations[saved.inspect])state.inspect=saved.inspect;
+    if(['','S','D','G','B'].includes(saved.terminal))state.terminal=saved.terminal;
+    if(['all','pmos','nmos'].includes(saved.device))state.device=saved.device;
+    for(const key of ['markers','body','gate','contacts','metal'])if(typeof saved[key]==='boolean')state[key]=saved[key];
+  }
+  try{restore(JSON.parse(localStorage.getItem('cmos-learning-lab')));}catch{}
+  function save() {
+    try{localStorage.setItem('cmos-learning-lab',JSON.stringify({version:2,...state}));}catch{}
+  }
+  function colorTheme() {
+    const probe=document.createElement('span');root.append(probe);
+    const resolve=value=>{probe.style.color=value;return getComputedStyle(probe).color;};
+    palette={
+      p:'#a6359a',n:'#087e68',
+      paleP:'#f1d9f3',
+      paleN:'#c4eddf',
+      gate:resolve('var(--viz-series-4,var(--red))'),metal:resolve('var(--viz-series-1,var(--blue))'),
+      contact:resolve('var(--viz-series-5,var(--orange))'),oxide:resolve('var(--muted-foreground)'),
+      ink:resolve('var(--foreground)'),bg:resolve('var(--background)'),line:resolve('var(--border)')
+    };probe.remove();
+  }
+  function element(tag,attrs={},text='') {
+    const e=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);
+    if(text)e.textContent=text;return e;
+  }
+  function textAt(parent,text,x,y,attrs={}) {
+    parent.append(element('text',{x,y,fill:palette.ink,'text-anchor':'middle','dominant-baseline':'middle',...attrs},text));
+  }
+  function rect(parent,x,y,w,h,color,attrs={}) {
+    parent.append(element('rect',{x,y,width:w,height:h,fill:color,...attrs}));
+  }
+  function line(parent,x1,y1,x2,y2,color=palette.ink,attrs={}) {
+    parent.append(element('line',{x1,y1,x2,y2,stroke:color,'stroke-width':1.5,...attrs}));
+  }
+  function dots(parent,x,y,w,h,dense,color) {
+    const spacing=dense?10:28;
+    for(let px=x+6;px<x+w-3;px+=spacing)for(let py=y+6;py<y+h-3;py+=spacing)
+      parent.append(element('circle',{cx:px,cy:py,r:dense?1.3:1.7,fill:color,opacity:0.65}));
+  }
+  function densityView() {
+    const holder=$('.density');holder.replaceChildren();
+    for(const [name,isN,heavy]of [['p',false,false],['p+',false,true],['n',true,false],['n+',true,true]]) {
+      const sample=document.createElement('div');sample.className='sample';
+      const title=document.createElement('h3');title.textContent=name;
+      const art=element('svg',{viewBox:'0 0 120 105',role:'img','aria-label':name+(heavy?' heavily doped':' lightly doped')});
+      const base=isN?palette.n:palette.p;
+      rect(art,2,2,116,101,isN?palette.paleN:palette.paleP);
+      dots(art,5,5,110,95,heavy,base);
+      const label=document.createElement('span');label.textContent=heavy?'Beshi doping':'Kom doping';
+      sample.append(title,art,label);holder.append(sample);
+    }
+  }
+  function deviceView(animated=false) {
+    const w=visual.clientWidth,h=visual.clientHeight;
+    svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.replaceChildren();
+    const pmos=state.mode==='pmos'||(state.mode==='inverter'&&state.device==='pmos'),on=pmos?state.input===0:state.input===1;
+    const x=w*0.07,bodyW=w*0.86,surface=180,bottom=350;
+    const bx=x+w*0.08,sx=x+w*0.27,dx=x+w*0.67;
+    const regionW=w*0.15;
+    const body=pmos?palette.paleN:palette.paleP,active=pmos?palette.p:palette.n;
+    rect(svg,x,surface,bodyW,bottom-surface,palette.paleP);
+    dots(svg,x,surface+70,bodyW,bottom-surface-75,false,palette.p);
+    if(pmos){
+      rect(svg,x+10,surface,bodyW-20,130,body,{'stroke':palette.n,'stroke-width':1.5});
+      dots(svg,x+12,surface+54,bodyW-24,72,false,palette.n);
+      textAt(svg,'p-substrate',x+bodyW/2,332);
+    }
+    const tapColor=pmos?palette.n:palette.p;
+    rect(svg,bx-regionW*0.3,surface,regionW*0.6,38,tapColor);
+    rect(svg,sx-regionW/2,surface,regionW,44,active);
+    rect(svg,dx-regionW/2,surface,regionW,44,active);
+    dots(svg,bx-regionW*0.3,surface,regionW*0.6,38,true,palette.bg);
+    dots(svg,sx-regionW/2,surface,regionW,44,true,palette.bg);
+    dots(svg,dx-regionW/2,surface,regionW,44,true,palette.bg);
+    const channelLeft=sx+regionW/2,channelRight=dx-regionW/2;
+    // Gate covers the entire source-to-drain channel, with a visible insulating gap.
+    rect(svg,channelLeft,surface-9,channelRight-channelLeft,9,palette.oxide);
+    rect(svg,channelLeft,surface-30,channelRight-channelLeft,20,palette.gate);
+    if(on)rect(svg,channelLeft,surface,channelRight-channelLeft,6,active,
+      animated?{class:'channel-reveal'}:{});
+    else line(svg,channelLeft,surface+4,channelRight,surface+4,palette.ink,{'stroke-dasharray':'4 5'});
+    textAt(svg,pmos?'n+ tap':'p+ tap',bx,surface+55);
+    textAt(svg,pmos?'p+':'n+',sx,surface+60);
+    textAt(svg,pmos?'p+':'n+',dx,surface+60);
+    textAt(svg,pmos?'B · n-well body':'B · p-type body',x+bodyW/2,pmos?283:310);
+    const outline={'stroke':palette.ink,'stroke-width':2.5};
+    if(state.terminal==='B'){
+      rect(svg,pmos?x+10:x,surface,pmos?bodyW-20:bodyW,pmos?130:bottom-surface,'none',outline);
+      rect(svg,bx-regionW*0.3,surface,regionW*0.6,38,'none',outline);
+    }
+    if(state.terminal==='S')rect(svg,sx-regionW/2,surface,regionW,44,'none',outline);
+    if(state.terminal==='D')rect(svg,dx-regionW/2,surface,regionW,44,'none',outline);
+    if(state.terminal==='G')rect(svg,channelLeft,surface-30,channelRight-channelLeft,20,'none',outline);
+    for(const [letter,px,py]of [['B',bx,surface],['S',sx,surface],['G',(channelLeft+channelRight)/2,surface-30],['D',dx,surface]]) {
+      const labelY=letter==='G'?77:111;
+      line(svg,px,labelY+14,px,py,palette.metal,{'stroke-width':3});
+      const selected=state.terminal===letter;
+      svg.append(element('circle',{cx:px,cy:labelY,r:15,fill:selected?palette.ink:palette.bg,stroke:palette.ink,'stroke-width':1.5}));
+      textAt(svg,letter,px,labelY,{fill:selected?palette.bg:palette.ink,'font-weight':500});
+    }
+    textAt(svg,pmos?'PMOS · p+ regions in n-well':'NMOS · n+ regions in p-body',w/2,25,{'font-weight':500});
+    textAt(svg,'Oxide',w*0.88,150,{'text-anchor':'end'});
+    line(svg,w*0.84,156,channelRight,surface-5,palette.oxide);
+    textAt(svg,on?'Channel ON · S ↔ D path':'Channel OFF',w/2,bottom+25,{'font-weight':500});
+    const v=pmos?'VDD':'VSS';
+    textAt(svg,v,bx,70);
+    textAt(svg,v,sx,70);
+  }
+  const material=id=>({
+    substrate:palette.paleP,well:palette.paleN,ps:palette.p,pd:palette.p,ns:palette.n,nd:palette.n,
+    ntap:palette.n,ptap:palette.p,poly:palette.gate,oxide:palette.oxide,contact:palette.contact,metal:palette.metal,
+    pchannel:palette.p,nchannel:palette.n
+  })[id];
+  function makeGeometry(){
+    boxes=[];
+    const solo=state.mode==='nmos'||state.mode==='pmos';
+    const soloP=state.mode==='pmos';
+    let currentNet='';
+    function box(id,x0,x1,y0,y1,z0,z1){
+      if(!state.body&&['substrate','well'].includes(id))return;
+      if(!state.gate&&['poly','oxide','pchannel','nchannel'].includes(id))return;
+      if(!state.contacts&&id==='contact')return;
+      if(!state.metal&&id==='metal')return;
+      if(state.device==='pmos')z1=Math.min(z1,-0.4);
+      if(state.device==='nmos')z0=Math.max(z0,0.4);
+      if(x1>x0&&y1>y0&&z1>z0)boxes.push({id,x0,x1,y0,y1,z0,z1,net:currentNet||({poly:'A',ps:'VDD',pd:'Y',ns:'VSS',nd:'Y',ntap:'VDD',ptap:'VSS',well:'VDD',substrate:'VSS'})[id]||''});
+    }
+    // Partition silicon into adjacent volumes. Every doped region shares the y=0 surface.
+    const xs=[-4,-3.5,-3.15,-2.65,-2.05,-0.28,0.28,2.05,3.5,4];
+    const zs=[-3.5,-3,-2.25,-1.7,-1.15,-0.4,1.15,1.7,2.25,3.5];
+    const ys=[-1.6,-1.05,-0.22,0];
+    for(let i=0;i<xs.length-1;i++)for(let j=0;j<ys.length-1;j++)for(let k=0;k<zs.length-1;k++){
+      const x=(xs[i]+xs[i+1])/2,y=(ys[j]+ys[j+1])/2,z=(zs[k]+zs[k+1])/2;
+      if(state.cut&&state.view!=='layout'&&((z>-1.7&&z<-1.15)||(z>1.7&&z<2.25)))continue;
+      let id='substrate';
+      if(state.step>=1&&Math.abs(x)<3.5&&z>-3&&z<-0.4&&y>-1.05)id='well';
+      if(y>-0.22){
+        const pRow=z>-2.25&&z<-1.15,nRow=z>1.15&&z<2.25;
+        if(pRow&&state.step>=2){if(x>-2.05&&x<-0.28)id='ps';if(x>0.28&&x<2.05&&(!solo||state.step>=3))id='pd';}
+        if(nRow&&state.step>=(solo?2:3)){if(x>-2.05&&x<-0.28)id='ns';if(x>0.28&&x<2.05&&state.step>=3)id='nd';}
+        if(state.step>=5&&x>-3.15&&x<-2.65){if(pRow)id='ntap';if(nRow)id='ptap';}
+      }
+      box(id,xs[i],xs[i+1],ys[j],ys[j+1],zs[k],zs[k+1]);
+    }
+    const spread=state.spread,gateY=0.045+spread*0.4,liY=0.7+spread,metalY=1.15+spread*1.7;
+    if(state.step>=4){
+      for(const z of [-1.7,1.7]){
+        box('oxide',-0.3,0.3,gateY-0.045,gateY,z-0.55,z+0.55);
+        if((z<0&&state.input===0)||(z>0&&state.input===1))
+          box(z<0?'pchannel':'nchannel',-0.28,0.28,0,0.015,z-0.55,state.cut&&state.view!=='layout'?z:z+0.55);
+      }
+      if(solo){const z=soloP?-1.7:1.7;box('poly',-.3,.3,gateY,gateY+.18,z-.85,z+.7);}else box('poly',-0.3,0.3,gateY,gateY+0.18,-2.4,2.4);
+    }
+    if(state.step>=6){
+      const row=soloP?-1.7:1.7;
+      for(const [x,z]of (solo?[[-2.9,row],[-1.3,row],[1.3,row],[0,row-.72]]:[[-2.9,-1.7],[-2.9,1.7],[-1.3,-1.7],[-1.3,1.7],[1.3,-1.7],[1.3,1.7],[0,0]])){
+        currentNet=x===0?'A':x>0?'Y':z<0?'VDD':'VSS';
+        const base=x===0?gateY+0.18:0;
+        box('contact',x-0.09,x+0.09,base,liY,z-0.09,z+0.09);
+        box('contact',x-0.19,x+0.19,liY,liY+0.12,z-0.19,z+0.19);
+        box('contact',x-0.085,x+0.085,liY+0.12,metalY,z-0.085,z+0.085);
+      }
+    }
+    currentNet='';
+    if(state.step>=7&&solo){
+      const z=soloP?-1.7:1.7,rail=soloP?-3:3;
+      currentNet=soloP?'VDD':'VSS';
+      box('metal',-3.4,-.7,metalY,metalY+.16,rail-.12,rail+.12);
+      for(const x of [-2.9,-1.3])box('metal',x-.12,x+.12,metalY,metalY+.16,Math.min(z,rail),Math.max(z,rail));
+      currentNet='Y';box('metal',1.18,3.5,metalY,metalY+.16,z-.12,z+.12);
+      currentNet='A';box('metal',-.12,.12,metalY,metalY+.16,z-.95,z-.6);
+      box('metal',-1,.12,metalY,metalY+.16,z-.95,z-.77);
+    }else if(state.step>=7){
+      for(const z of [-3,3]){currentNet=z<0?'VDD':'VSS';box('metal',-3.4,3.4,metalY,metalY+0.16,z-0.16,z+0.16);}
+      for(const x of [-2.9,-1.3]){
+        currentNet='VDD';box('metal',x-0.12,x+0.12,metalY,metalY+0.16,-3,-1.7);
+        currentNet='VSS';box('metal',x-0.12,x+0.12,metalY,metalY+0.16,1.7,3);
+      }
+      currentNet='Y';box('metal',1.18,1.42,metalY,metalY+0.16,-1.7,1.7);
+      box('metal',1.3,3.5,metalY,metalY+0.16,-0.12,0.12);
+      currentNet='A';box('metal',-3.5,0.12,metalY,metalY+0.16,-0.12,0.12);
+    }
+    return {gateY,metalY};
+  }
+  function initGL(){
+    gl=canvas.getContext('webgl',{antialias:true,alpha:true,preserveDrawingBuffer:true});
+    if(!gl){$('.detail').textContent='3D graphics ei browser-e available nei. NMOS/PMOS demo dekha jabe.';return false;}
+    const vertex='attribute vec3 position;attribute vec3 normal;attribute vec3 color;uniform mat4 projection;varying vec3 shade;void main(){gl_Position=projection*vec4(position,1.0);float light=0.80+0.20*max(0.0,dot(normal,normalize(vec3(-0.3,1.0,0.6))));shade=color*light;}';
+    const fragment='precision mediump float;varying vec3 shade;void main(){gl_FragColor=vec4(shade,1.0);}';
+    function shader(type,source){
+      const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);
+      if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;
+    }
+    program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));
+    gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);
+    if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));
+    buffer=gl.createBuffer();gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);return true;
+  }
+  function rgb(css){
+    const c=document.createElement('canvas').getContext('2d');c.canvas.width=c.canvas.height=1;
+    c.fillStyle=css;c.fillRect(0,0,1,1);return [...c.getImageData(0,0,1,1).data].slice(0,3).map(v=>v/255);
+  }
+  function transform(){
+    const w=visual.clientWidth,h=visual.clientHeight;
+    const yaw=state.view==='layout'?0:state.yaw,pitch=state.view==='layout'?Math.PI/2:state.pitch;
+    const cy=Math.cos(yaw),sy=Math.sin(yaw),sp=Math.sin(pitch),cp=Math.cos(pitch);
+    const scale=Math.min((w-100)/10.5,(h-76)/9.5)*state.zoom;
+    const fx=2*scale/w,fy=2*scale/h,midY=state.spread*0.8;
+    const centerZ=state.device==='pmos'?-1.9:state.device==='nmos'?1.9:0;
+    const matrix=new Float32Array([cy*fx,-sy*sp*fy,-sy*cp/20,0, 0,cp*fy,-sp/20,0,
+      -sy*fx,-cy*sp*fy,-cy*cp/20,0, centerZ*sy*fx,(centerZ*cy*sp-midY*cp)*fy,(centerZ*cy*cp+midY*sp)/20,1]);
+    const project=(x,y,z)=>[w/2+(x*cy-(z-centerZ)*sy)*scale,h/2+((x*sy+(z-centerZ)*cy)*sp-(y-midY)*cp)*scale];
+    return {matrix,project,w,h};
+  }
+  function render3D(){
+    if(!gl&&!initGL())return;
+    const {gateY,metalY}=makeGeometry(),{matrix,project,w,h}=transform();
+    vertices=[];
+    const colorMap={},backgroundRGB=rgb(palette.bg);
+    for(const box of boxes)colorMap[box.id]??=rgb(material(box.id));
+    const cubeFaces=[[[0,3,2,1],[0,-1,0]],[[4,5,6,7],[0,1,0]],[[0,1,5,4],[0,0,-1]],
+      [[3,7,6,2],[0,0,1]],[[0,4,7,3],[-1,0,0]],[[1,2,6,5],[1,0,0]]];
+    for(const b of boxes){
+      const points=[[b.x0,b.y0,b.z0],[b.x1,b.y0,b.z0],[b.x1,b.y0,b.z1],[b.x0,b.y0,b.z1],
+        [b.x0,b.y1,b.z0],[b.x1,b.y1,b.z0],[b.x1,b.y1,b.z1],[b.x0,b.y1,b.z1]];
+      let color=colorMap[b.id];
+      if((state.inspect!=='all'&&state.inspect!==b.id)||(state.net!=='all'&&!selectedNet(b)))color=color.map((c,i)=>c*0.45+backgroundRGB[i]*0.55);
+      for(const [ids,normal]of cubeFaces)for(const index of [ids[0],ids[1],ids[2],ids[0],ids[2],ids[3]])
+        vertices.push(...points[index],...normal,...color);
+    }
+    const ratio=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);
+    gl.viewport(0,0,canvas.width,canvas.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(program);gl.uniformMatrix4fv(gl.getUniformLocation(program,'projection'),false,matrix);
+    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.DYNAMIC_DRAW);
+    ['position','normal','color'].forEach((name,i)=>{
+      const loc=gl.getAttribLocation(program,name);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,36,i*12);
+    });
+    gl.drawArrays(gl.TRIANGLES,0,vertices.length/9);
+    svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.replaceChildren();
+    if(state.net==='flow')drawFlow(project);
+    if(!state.markers)return;
+    // Keep labels horizontal in fixed gutters and link them to actual 3D positions.
+    const labels=[];
+    if(state.step>=1)labels.push(['B · n-well',-2,-0.65,-1.7,'left']);
+    if(state.step>=2)labels.push(['PMOS · S',-1.3,0,-1.7,'left']);
+    if(state.step>=(state.mode==='pmos'?3:2))labels.push(['PMOS · D',1.3,0,-1.7,'right']);
+    if(state.step>=(state.mode==='nmos'?2:3))labels.push(['NMOS · S',-1.3,0,1.7,'left']);
+    if(state.step>=3)labels.push(['NMOS · D',1.3,0,1.7,'right']);
+    labels.push(['B · p-body',2,-0.65,1.7,'right']);
+    if(state.step>=4)labels.push(['G · poly',0,gateY+0.18,state.device==='pmos'?-1.7:state.device==='nmos'?1.7:0,'right']);
+    if(state.step>=5)labels.push(['N+ tap',-2.9,0,-1.7,'left'],['P+ tap',-2.9,0,1.7,'left']);
+    const compact=w<500;
+    for(const side of ['left','right']){
+      const items=labels.filter(a=>a[4]===side)
+        .filter(a=>state.device==='all'||(state.device==='pmos'?a[3]<0:a[3]>0))
+        .filter(a=>state.body||!a[0].startsWith('B'))
+        .filter(a=>state.gate||!a[0].startsWith('G'))
+        .map(a=>({text:a[0],p:project(a[1],a[2],a[3])})).sort((a,b)=>a.p[1]-b.p[1]);
+      let lastY=25;
+      for(let i=0;i<items.length;i++){
+        const item=items[i],y=clamp(item.p[1],lastY,h-24-(items.length-1-i)*25);lastY=y+25;
+        const x=side==='left'?4:w-4,edge=side==='left'?(compact?74:90):w-(compact?74:90);
+        line(svg,edge,y,item.p[0],item.p[1],palette.ink,{'stroke-width':0.8});
+        svg.append(element('circle',{cx:item.p[0],cy:item.p[1],r:2,fill:palette.ink}));
+        textAt(svg,compact?item.text.replace('PMOS · ','P·').replace('NMOS · ','N·'):item.text,x,y,
+          {'text-anchor':side==='left'?'start':'end',class:'text-small'});
+      }
+    }
+    textAt(svg,state.cut?'Cutaway · silicon-er kata mukh':'Solid · ekoi silicon surface',w/2,14,{class:'text-small'});
+    if(state.step===7&&state.device==='all'&&state.metal){
+      textAt(svg,'A = '+state.input+'   →   Y = '+(1-state.input),w/2,h-12,{'font-weight':500});
+      for(const [name,x,z]of [['VDD',3.45,-3],['VSS',3.45,3],['A',-3.55,0],['Y',3.6,0]]){
+        const [px,py]=project(x,metalY+0.16,z);
+        const labelX=clamp(px,20,w-20),labelY=clamp(py-12,32,h-35),labelWidth=name.length*8+10;
+        rect(svg,labelX-labelWidth/2,labelY-9,labelWidth,18,palette.bg);
+        textAt(svg,name,labelX,labelY,{class:'text-small','font-weight':500});
+      }
+    }
+  }
+  function deviceDetail(){
+    const pmos=state.mode==='pmos'||(state.mode==='inverter'&&state.device==='pmos'),on=pmos?state.input===0:state.input===1;
+    const base=pmos?'n-well':'p-type substrate',tap=pmos?'N+':'P+',rail=pmos?'VDD':'VSS';
+    const details={
+      S:'S = Source. Ei demo-te source '+rail+'-te fixed. Source ar drain duita-i heavily doped.',
+      D:'D = Drain. Gate ON hole source ar drain-er majhe conducting channel hoy.',
+      G:'G = Gate. Oxide-er upor ei electrode. Voltage diye nicher channel toiri ba bondho kore.',
+      B:'B = Body. Puro '+base+' holo body; '+tap+' tap diye body-ke '+rail+'-te connect kori.'
+    };
+    return details[state.terminal]||(pmos
+      ?'PMOS-er source VDD-te. Gate LOW hole channel ON, gate HIGH hole OFF.'
+      :'NMOS-er source VSS-te. Gate HIGH hole channel ON, gate LOW hole OFF.');
+  }
+  const stepTitles=['p-type silicon','Embedded n-well','P+ source / drain','N+ source / drain','Oxide + common gate','Body taps','Contact stack','Metal + inverter'];
+  function soloTitles(){return ['p-type silicon',state.mode==='pmos'?'Embedded n-well':'P-body + isolation boundary','Source implant','Drain implant','Oxide + gate','Body tap','Contact stack','Separate terminal wiring'];}
+  function soloDescriptions(){const p=state.mode==='pmos';return [
+    'P-type silicon base. Source/drain ekhono toiri hoyni.',
+    p?'Silicon-er bhitore halka n-well. Eta PMOS body.':'P-substrate-i NMOS body. Pasher device theke isolation conceptual boundary diye bojhano.',
+    (p?'P+':'N+')+' source silicon-er surface-er bhitore boshe.',
+    (p?'P+':'N+')+' drain. Majher halka body-te ekhono conducting channel nei.',
+    'Gate oxide-er upor poly. Poly extension-e pore gate contact boshbe; oxide diye current jay na.',
+    (p?'N+ tap → n-well → VDD.':'P+ tap → p-body → VSS.')+' Body-ke fixed voltage-e rakhe.',
+    'S, D, G ar body tap-er nijer licon → LI1 → mcon contact stack.',
+    'Alada transistor: source/body supply-te; gate input ar drain terminal nijeder metal-e. Operation tab-e voltage sweep koro.'
+  ];}
+  function selectedNet(b){
+    if(state.net==='body')return ['substrate','well','ntap','ptap'].includes(b.id)||(['contact','metal'].includes(b.id)&&['VDD','VSS'].includes(b.net)&&b.x0< -2.5);
+    if(state.net==='flow'){const p=state.input===0;return b.id===(p?'pchannel':'nchannel')||(['ps','pd','ns','nd'].includes(b.id)&&b.id[0]===(p?'p':'n'))||(['metal','contact'].includes(b.id)&&(b.net==='Y'||b.net===(p?'VDD':'VSS')));}
+    return b.net===state.net;
+  }
+  function drawFlow(project){
+    const p=state.input===0,z=p?-1.7:1.7;
+    if(state.step<7||(state.device!=='all'&&state.device!==(p?'pmos':'nmos')))return;
+    const my=1.15+state.spread*1.7+.2;
+    const pts=p?[[-1.3,my,-3],[-1.3,my,z],[-1.3,.06,z],[0,.06,z],[1.3,.06,z],[1.3,my,z]]:
+      [[1.3,my,z],[1.3,.06,z],[0,.06,z],[-1.3,.06,z],[-1.3,my,z],[-1.3,my,3]];
+    const points=pts.map(v=>project(...v));
+    svg.append(element('polyline',{points:points.map(v=>v.join(',')).join(' '),fill:'none',stroke:'#ffb421','stroke-width':4,'stroke-dasharray':'8 6',class:'flow-dash'}));
+    const last=points.at(-1);svg.append(element('circle',{cx:last[0],cy:last[1],r:6,fill:'#ffb421'}));
+  }
+  function updateLessons(){
+    $$('[data-net]').forEach(b=>b.setAttribute('aria-pressed',String(state.net===b.dataset.net)));
+    const inv=state.mode==='inverter',p=state.mode==='pmos',on=p?!state.input:!!state.input;
+    $('[data-flow]').textContent=inv?(state.input?'A=1 → NMOS ON → Y-r charge VSS-e name → Y=0. PMOS OFF.':'A=0 → PMOS ON → VDD theke Y charge hoy → Y=1. NMOS OFF.'):(on?'Channel ON. S ar D-r majhe path ache; current-er jonno VDS-o lagbe.':'Channel OFF. Gate source-er tulonay enough voltage payni.');
+    $('[data-flow]').textContent+=' Dashed path conventional charging/discharging direction; settled ideal inverter-e continuous DC current noy.';
+    const sch=$('[data-schematic]');sch.replaceChildren();
+    const wire=(net,points)=>sch.append(element('polyline',{points,fill:'none',stroke:state.net===net?'#ffb421':palette.metal,'stroke-width':state.net===net?5:3,'data-click-net':net,tabindex:0,role:'button','aria-label':'Highlight '+net}));
+    const rows=inv?[[70,'PMOS','VDD',!state.input],[140,'NMOS','VSS',!!state.input]]:[[100,p?'PMOS':'NMOS',p?'VDD':'VSS',on]];
+    wire('A','45,35 180,35 180,150');textAt(sch,'A · '+state.input,80,20);
+    for(const [y,name,rail,conduct] of rows){
+      wire('A',`180,${y} 245,${y}`);wire(rail,`360,${y-18} 475,${y-18}`);wire('Y',`360,${y+18} 530,${y+18}`);
+      rect(sch,245,y-26,115,52,conduct?palette.paleN:palette.bg,{stroke:palette.ink});
+      textAt(sch,name+(conduct?' ON':' OFF'),302,y,{fill:conduct?'#153b32':palette.ink});
+      textAt(sch,rail+' · S+B',435,y-31);textAt(sch,'D',375,y+32);
+    }
+    if(inv)wire('Y','530,88 530,158');textAt(sch,inv?'Y · '+(1-state.input):'D terminal',540,20);
+    drawField();
+  }
+  function drawField(){
+    const art=$('[data-field]'),p=state.fieldDevice==='pmos',on=p?!state.input:!!state.input;
+    art.replaceChildren();rect(art,50,95,500,90,p?palette.paleN:palette.paleP);
+    rect(art,50,95,120,40,p?palette.p:palette.n);rect(art,430,95,120,40,p?palette.p:palette.n);
+    rect(art,170,80,260,12,palette.oxide);rect(art,170,50,260,27,palette.gate);
+    textAt(art,'Gate · '+(state.input?'HIGH':'LOW'),300,29);textAt(art,'S',105,157,{fill:'#183b32'});textAt(art,'D',490,157,{fill:'#183b32'});
+    textAt(art,p?'n-well body':'p-type body',300,172,{fill:'#183b32'});
+    if(on){rect(art,170,95,260,7,p?palette.p:palette.n);for(let x=200;x<430;x+=45){line(art,x,66,x,119,'#ffb421',{'stroke-width':2});textAt(art,p?'↑':'↓',x,115,{fill:'#594000'});}}
+    textAt(art,'Oxide',490,79);textAt(art,on?'Channel toiri holo':'Channel nei',300,140,{fill:'#183b32'});
+    $('[data-field-note]').textContent=(p?'PMOS: gate source-er cheye niche namle holes channel banay.':'NMOS: gate source-er cheye upore uthle electrons channel banay.')+' Oxide insulator: gate current path noy; electric field silicon-er charge distribution bodlay. Arrow field-er conceptual direction, carrier-er motion noy.';
+  }
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{stop();state.view=b.dataset.view;state.inspect='all';state.net='all';update();}));
+  $$('[data-net]').forEach(b=>b.addEventListener('click',()=>{state.net=b.dataset.net;state.inspect='all';state.step=7;update();}));
+  $('[data-schematic]').addEventListener('click',e=>{if(e.target.dataset.clickNet){state.net=e.target.dataset.clickNet;state.inspect='all';state.step=7;update();}});
+  $('[data-schematic]').addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)&&e.target.dataset.clickNet){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
+  $$('[data-field-device]').forEach(b=>b.addEventListener('click',()=>{state.fieldDevice=b.dataset.fieldDevice;drawField();}));
+  $$('[data-guide]').forEach(b=>b.addEventListener('click',()=>{const modes=['doping','nmos','pmos','inverter'];const i=b.dataset.guide==='start'?0:Math.min(3,modes.indexOf(state.mode)+1);$('[data-mode="'+modes[i]+'"]').click();$('[data-guide-note]').textContent=['1/4 · + mane beshi doping, positive charge noy.','2/4 · NMOS: p-body-te n+ S/D. Build animation chalao.','3/4 · PMOS: n-well-e p+ S/D. LOW gate-e ON.','4/4 · A/Y net select kore duita transistor milao.'][i];}));
+  function update(animated=false){
+    const doping=state.mode==='doping',operation=state.view==='operation',three=!doping&&state.view!=='cross'&&!operation;
+    $('[data-view="operation"]').hidden=!['nmos','pmos'].includes(state.mode);
+    $('[data-operation]').hidden=!operation;
+    window.cmosOperation(state.mode,operation);
+    if(state.mode==='nmos'||state.mode==='pmos')state.device=state.mode;
+    $('[data-device]').disabled=state.mode!=='inverter';
+    $('[data-views]').hidden=doping;
+    $('[data-lessons]').hidden=doping||operation;
+    $$('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===state.view)));
+    updateLessons();
+    const steps=state.mode==='inverter'?buildDescriptions:soloDescriptions();
+    [...$('[data-step]').options].forEach((o,i)=>{o.textContent=(i+1)+' · '+(state.mode==='inverter'?stepTitles:soloTitles())[i];});
+    $('[data-panel="doping"]').hidden=!doping;
+    $('[data-panel="visual"]').hidden=doping||operation;
+    $('[data-panel="device"]').hidden=doping||operation||(three&&state.step<7);
+    $('[data-panel="terminals"]').hidden=doping||operation;
+    $('[data-panel="three"]').hidden=!three;
+    $('[data-panel="legend"]').hidden=doping;
+    canvas.hidden=!three;
+    $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
+    $$('[data-input]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.input)===state.input)));
+    $$('[data-terminal]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.terminal===state.terminal)));
+    $('[data-step]').value=state.step;$('[data-inspect]').value=state.inspect;$('[data-cut]').checked=state.cut;
+    $('[data-spread]').value=state.spread;$('[data-zoom]').value=state.zoom;
+    $('[data-device]').value=state.device;
+    $$('[data-visible]').forEach(c=>{c.checked=state[c.dataset.visible];});
+    $('[data-action="play"]').textContent=timer?'Pause':'Build animation';
+    if(operation){
+      $('.detail').textContent='Construction-e fire jete 3D construction ba Layout build select koro.';
+      $('[data-note]').textContent='Voltage lab-er bias ar construction-er logic input alada; NMOS/PMOS-er bias separately mone thake.';
+    }else if(doping){
+      densityView();
+      $('.detail').textContent='Doping mane silicon-e olpo onno dhoroner atom meshano. p-type-e hole (electron-er khali jayga), n-type-e electron current carry kore.';
+      $('[data-note]').textContent='p+ ar n+-er “+” mane beshi dopant atom. Dot-er shonkha shudhu kom-beshi bojhanor jonno.';
+    }else if(three){
+      const solo=state.device!=='all';
+      $('.detail').textContent=state.inspect==='all'
+        ? solo&&state.step===7 ? state.device==='pmos' ? 'PMOS · P+ source/drain · n-well body' : 'NMOS · N+ source/drain · p-type body'
+          : steps[state.step]
+        : explanations[state.inspect];
+      if(solo){
+        const channelOn=state.device==='pmos'?state.input===0:state.input===1;
+        $('[data-output]').textContent=state.device.toUpperCase()+(channelOn?' · Channel ON':' · Channel OFF');
+      }else{
+        $('[data-output]').textContent=state.input?'NMOS ON · PMOS OFF · Y = 0':'PMOS ON · NMOS OFF · Y = 1';
+      }
+      $('[data-note]').textContent='Drag kore ghorao. Halka rong = kom doping, gadh rong = beshi doping. Cutaway-te duita silicon strip sorano; upper-layer separation ar dielectric simplified.';
+      render3D();
+    }else{
+      deviceView(animated);$('.detail').textContent=deviceDetail();
+      $('[data-output]').textContent=(state.mode==='pmos'?state.input===0:state.input===1)?'Channel ON':'Channel OFF';
+      $('[data-note]').textContent='0 = VSS (ground), 1 = VDD (high supply). Source ar body fixed supply-te; gate-er voltage source-er tulonay kaj kore.';
+    }
+  }
+  function stop(){clearInterval(timer);timer=null;}
+  $('[data-device]').addEventListener('change',()=>{
+    state.device=$('[data-device]').value;state.inspect='all';update();save();
+  });
+  $$('[data-visible]').forEach(c=>c.addEventListener('change',()=>{state[c.dataset.visible]=c.checked;update();save();}));
+  $$('[data-mode]').forEach(button=>button.addEventListener('click',()=>{stop();state.mode=button.dataset.mode;state.device=state.mode==='inverter'?'all':state.mode;state.view='3d';state.net='all';state.inspect='all';state.step=7;state.terminal='';update();save();}));
+  $$('[data-input]').forEach(button=>button.addEventListener('click',()=>{state.input=Number(button.dataset.input);update(true);save();}));
+  $$('[data-terminal]').forEach(button=>button.addEventListener('click',()=>{state.terminal=button.dataset.terminal;state.inspect=state.terminal==='G'?'poly':state.terminal==='B'?'all':(state.device==='pmos'?'p':'n')+state.terminal.toLowerCase();state.net=state.terminal==='B'?'body':'all';state.step=7;update();save();}));
+  $$('[data-action]').forEach(button=>button.addEventListener('click',()=>{
+    switch(button.dataset.action){
+      case 'play':if(timer)stop();else{state.step=0;state.inspect='all';state.net='all';timer=setInterval(()=>{state.step++;if(state.step===7)stop();update();save();},2300);}break;
+      case 'iso':state.view='3d';state.yaw=-0.35;state.pitch=0.8;state.zoom=1;break;
+      case 'top':state.view='layout';state.yaw=0;state.pitch=Math.PI/2;break;
+      case 'side':state.view='3d';state.yaw=0;state.pitch=0.22;break;
+    }update();save();
+  }));
+  for(const [selector,key]of [['[data-step]','step'],['[data-inspect]','inspect'],['[data-cut]','cut'],['[data-spread]','spread'],['[data-zoom]','zoom']]){
+    $(selector).addEventListener('input',()=>{
+      state[key]=key==='inspect'?$(selector).value:key==='cut'?$(selector).checked:Number($(selector).value);
+      if(key==='step'){stop();state.inspect='all';}
+      if(key==='inspect'){stop();state.step=7;}
+      update();
+    });$(selector).addEventListener('change',save);
+  }
+  const pointers=new Map();let pinch=null;
+  canvas.addEventListener('pointerdown',e=>{
+    canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);
+    if(pointers.size===2){const[a,b]=[...pointers.values()];pinch={distance:Math.hypot(a[0]-b[0],a[1]-b[1]),zoom:state.zoom};}
+  });
+  canvas.addEventListener('pointermove',e=>{
+    const previous=pointers.get(e.pointerId);if(!previous)return;
+    pointers.set(e.pointerId,[e.clientX,e.clientY]);
+    if(pointers.size===2&&pinch){const[a,b]=[...pointers.values()];state.zoom=clamp(pinch.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/Math.max(1,pinch.distance),0.75,1.6);}
+    else{state.yaw+=(e.clientX-previous[0])*0.009;state.pitch=clamp(state.pitch+(e.clientY-previous[1])*0.009,0.12,Math.PI/2);}
+    render3D();$('[data-zoom]').value=state.zoom;
+  });
+  for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,e=>{pointers.delete(e.pointerId);pinch=null;save();});
+  canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*0.001),0.75,1.6);render3D();$('[data-zoom]').value=state.zoom;save();},{passive:false});
+  new ResizeObserver(()=>update()).observe(visual);
+  new MutationObserver(()=>{colorTheme();update();}).observe(document.documentElement,{attributes:true,attributeFilter:['style','class','data-theme']});
+  colorTheme();update();
+})();
+</script>
+
+</body></html>
