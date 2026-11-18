@@ -33,3 +33,13 @@ details{border:1px solid var(--border);border-radius:8px;padding:12px}summary{cu
 .lab-reference details[open] summary{margin-bottom:12px}
 .lab-reference table{width:100%;table-layout:fixed}
 .lab-reference td,.lab-reference th{overflow-wrap:anywhere}
+#cmos-learning-lab [data-views]{padding-top:10px;border-top:1px solid var(--border)}
+#cmos-learning-lab .lab-model .visual{height:clamp(420px,58vw,640px);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+#cmos-learning-lab .lab-model .cross-section{height:390px}
+.trace-controls{padding-top:10px;border-top:1px solid var(--border)}
+.lab-controls .lab-reference{padding-top:10px;border-top:1px solid var(--border)}
+@media(max-width:740px){
+  #cmos-learning-lab .lab-model .visual{height:390px}
+  .lab-model{grid-row:1}
+  .lab-controls{grid-row:2}
+}
