@@ -18,3 +18,18 @@ details{border:1px solid var(--border);border-radius:8px;padding:12px}summary{cu
   .lab-model .visual{height:390px}
 }
 #cmos-learning-lab .cross-section svg{pointer-events:auto}#cmos-learning-lab .cross-section svg>*{pointer-events:none}#cmos-learning-lab .cross-section svg>[data-cross-part]{pointer-events:all;cursor:pointer}
+#cmos-learning-lab .lab-controls .fields{grid-template-columns:minmax(0,1fr);gap:14px}
+.gate-controls,.control-group{padding:12px 14px}
+.gate-controls,[data-model-controls]{border:1px solid var(--border);border-radius:10px}
+.gate-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.gate-result{font-size:.875rem;color:var(--muted-foreground)}
+#cmos-learning-lab [data-model-controls]{gap:0}
+.control-group+.control-group{border-top:1px solid var(--border)}
+.control-label{display:block;margin-bottom:8px;color:var(--muted-foreground);font-size:.875rem;font-weight:600}
+.control-group .viz-row{gap:8px 14px}
+.lab-reference{display:grid;gap:8px;margin-top:8px;min-width:0}
+.lab-reference h3{margin:0 0 2px;font-size:1rem}
+.lab-reference summary{margin:0}
+.lab-reference details[open] summary{margin-bottom:12px}
+.lab-reference table{width:100%;table-layout:fixed}
+.lab-reference td,.lab-reference th{overflow-wrap:anywhere}

@@ -51,14 +51,6 @@
 <option value="4">5 · Insulator + common gate</option><option value="5">6 · Body contacts</option>
 <option value="6">7 · Contact stack</option><option value="7" selected>8 · Metal + inverter</option>
 </select></label>
-<label class="form-label">Inspect<select class="form-select" data-inspect>
-<option value="all">Whole structure</option><option value="well">PMOS body · n-well</option>
-<option value="substrate">NMOS body · p-substrate</option><option value="ps">PMOS source</option>
-<option value="pd">PMOS drain</option><option value="ns">NMOS source</option><option value="nd">NMOS drain</option>
-<option value="poly">Gate · poly</option><option value="oxide">Gate oxide</option>
-<option value="ntap">N+ body tap</option><option value="ptap">P+ body tap</option>
-<option value="contact">Licon → LI1 → mcon</option><option value="metal">Metal 1</option>
-</select></label>
 <label class="form-label">Upper-layer separation<input class="form-range" type="range" min="0" max="1" value="0" step="0.01" data-spread></label>
 <label class="form-label">Zoom<input class="form-range" type="range" min="0.75" max="1.6" value="1" step="0.01" data-zoom></label>
 </div>
@@ -80,20 +72,27 @@
 <svg role="img" aria-label="MOSFET cross section"></svg>
 <div class="part-tooltip" hidden></div>
 </div>
-<div class="viz-row" data-panel="device" hidden>
+<div class="gate-controls" data-panel="device" hidden>
+<div class="viz-row">
 <span>Gate input</span>
 <button class="btn" type="button" data-input="0" aria-pressed="true">0 · LOW</button>
 <button class="btn" type="button" data-input="1" aria-pressed="false">1 · HIGH</button>
-<span data-output aria-live="polite"></span>
+</div>
+<span class="gate-result" data-output aria-live="polite"></span>
 </div>
 <div data-model-controls hidden>
-<div class="viz-row" aria-label="Visible parts">
+<div class="control-group" role="group" aria-label="Visible parts">
+<span class="control-label">Visible layers</span>
+<div class="viz-row">
 <label class="form-label">Device <select class="form-select" data-device><option value="all">Both</option><option value="pmos">PMOS only</option><option value="nmos">NMOS only</option></select></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="body" checked><span>Body / well</span></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="gate" checked><span>Gate / oxide</span></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="contacts" checked><span>Contacts</span></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="metal" checked><span>Metal</span></label>
 </div>
+</div>
+<div class="control-group" role="group" aria-label="Build and camera">
+<span class="control-label">Build and camera</span>
 <div class="viz-row">
 <button type="button" class="btn btn-primary" data-action="play">Build animation</button>
 <button type="button" class="btn" data-action="iso">3D</button>
@@ -102,13 +101,17 @@
 <label class="form-check"><input class="form-check-input" type="checkbox" data-cut checked><span class="form-check-label">Cutaway · look inside</span></label>
 </div>
 </div>
-<details data-lessons open><summary>Connections and current path · hide/show</summary>
+</div>
+<section class="lab-reference" aria-labelledby="lab-reference-title">
+<h3 id="lab-reference-title">Explore the circuit</h3>
+<details data-lessons><summary>Connections and current path</summary>
 <div class="viz-row"><button class="btn" data-net="all">All nets</button><button class="btn" data-net="A">A · gate</button><button class="btn" data-net="Y">Y · drain</button><button class="btn" data-net="VDD">VDD</button><button class="btn" data-net="VSS">VSS</button><button class="btn" data-net="body">Body → tap → supply</button><button class="btn" data-net="flow">ON path</button></div>
 <svg data-schematic viewBox="0 0 600 190" role="img" aria-label="Clickable simplified transistor connection diagram"></svg><p data-flow></p>
 </details>
 <details data-closeup><summary>How does the gate create a channel? · zoom</summary><div class="viz-row"><button class="btn" data-field-device="nmos">NMOS</button><button class="btn" data-field-device="pmos">PMOS</button></div><svg data-field viewBox="0 0 600 210" role="img" aria-label="Gate field and channel close-up"></svg><p data-field-note></p></details>
 <details><summary>Contact staircase · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#87a294" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — longer connections</text><text x="300" y="73">4 · mcon — LI1 to M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly to LI1</text><text x="300" y="175">1 · doped silicon or poly</text></g></svg><p>A contact is a conductive bridge through an insulating layer. Via1 connects M1 to M2; this model stops at M1. The gate contact sits on a poly extension outside the active channel.</p></details>
 <details><summary>Compare with a real Magic layout</summary><p>This app uses teaching colors. Magic colors depend on the technology file. The original screenshot below labels N-WELL, pdiff, ndiff, Poly and metal1. Click the image to enlarge it.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>In this app</th><th>Identify in Magic</th></tr><tr><td>Lightly doped n-well</td><td>Well enclosure around the PMOS</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; a poly crossing defines a transistor</td></tr><tr><td>Gate</td><td>Poly strip crossing diffusion</td></tr><tr><td>Blue wiring</td><td>Metal 1, connected to diffusion/poly through contacts</td></tr></table><p>The build order explains the structure; it is not a fabrication recipe. Isolation (STI), dielectric, implants and design rules are simplified. Real layouts require DRC and LVS.</p></details>
+</section>
 <span class="text-small text-muted" data-note></span>
 </div>
 </div>
@@ -121,26 +124,11 @@
   const $=selector=>root.querySelector(selector);
   const $$=selector=>[...root.querySelectorAll(selector)];
   const svg=$('.visual svg'),canvas=$('canvas'),visual=$('.visual');
-  const state={mode:'inverter',input:0,terminal:'',step:7,inspect:'all',cut:true,spread:0,zoom:1,yaw:-0.35,pitch:0.8,
+  const state={mode:'inverter',input:0,terminal:'',step:7,cut:true,spread:0,zoom:1,yaw:-0.35,pitch:0.8,
     view:'3d',net:'all',fieldDevice:'nmos',device:'all',body:true,gate:true,contacts:true,metal:true};
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ns='http://www.w3.org/2000/svg';
   let palette={},timer=null,gl=null,program=null,buffer=null,vertices=[],boxes=[];
-  const explanations={
-    all:'Drag to rotate. The cut surface reveals the well and source/drain regions embedded in silicon.',
-    well:'B is the PMOS body: an n-well embedded in the p-substrate. An n+ tap provides its electrical contact.',
-    substrate:'B is the NMOS body: the p-type substrate. A p+ tap provides its electrical contact.',
-    ps:'PMOS source: heavily doped p+ silicon. In the inverter it connects to VDD.',
-    pd:'PMOS drain: p+ silicon. In the inverter it joins the NMOS drain at output Y.',
-    ns:'NMOS source: heavily doped n+ silicon. In the inverter it connects to VSS.',
-    nd:'NMOS drain: n+ silicon. In the inverter it joins the PMOS drain at output Y.',
-    poly:'G is the gate electrode. In the inverter, poly joins both gates to A. Gate oxide electrically insulates the gate from silicon.',
-    oxide:'Gate oxide is a thin insulator. The gate electric field controls the channel underneath.',
-    ntap:'The n+ tap contacts the n-well body. Contacts and metal connect it to the body terminal; in the inverter this is VDD.',
-    ptap:'The p+ tap contacts the p-substrate body. Contacts and metal connect it to the body terminal; in the inverter this is VSS.',
-    contact:'Silicon/poly → licon → local interconnect (LI1) → mcon → Metal 1.',
-    metal:'VDD → PMOS source/body; VSS → NMOS source/body; A → both gates; Y → both drains.'
-  };
   const buildDescriptions=[
     'Start with p-type silicon, which forms the NMOS body.',
     'An embedded region is doped n-type. This n-well forms the PMOS body.',
@@ -158,7 +146,6 @@
     state.input=state.input?1:0;state.step=clamp(Math.round(state.step),0,7);
     state.spread=clamp(state.spread,0,1);state.zoom=clamp(state.zoom,0.75,1.6);state.pitch=clamp(state.pitch,0.12,Math.PI/2);
     if(typeof saved.cut==='boolean')state.cut=saved.cut;
-    if(explanations[saved.inspect])state.inspect=saved.inspect;
     if(['all','pmos','nmos'].includes(saved.device))state.device=saved.device;
     for(const key of ['body','gate','contacts','metal'])if(typeof saved[key]==='boolean')state[key]=saved[key];
   }
@@ -382,7 +369,7 @@
       const points=[[b.x0,b.y0,b.z0],[b.x1,b.y0,b.z0],[b.x1,b.y0,b.z1],[b.x0,b.y0,b.z1],
         [b.x0,b.y1,b.z0],[b.x1,b.y1,b.z0],[b.x1,b.y1,b.z1],[b.x0,b.y1,b.z1]];
       let color=colorMap[b.id];
-      if((state.inspect!=='all'&&state.inspect!==b.id)||(state.net!=='all'&&!selectedNet(b)))color=color.map((c,i)=>c*0.45+backgroundRGB[i]*0.55);
+      if(state.net!=='all'&&!selectedNet(b))color=color.map((c,i)=>c*0.45+backgroundRGB[i]*0.55);
       if(activePart){
         color=partKey(b)===activePart.key?highlight:color.map((value,i)=>value*.6+backgroundRGB[i]*.4);
       }
@@ -481,9 +468,9 @@
     textAt(art,'Oxide',490,79);textAt(art,on?'Channel formed':'No channel',300,140,{fill:'#183b32'});
     $('[data-field-note]').textContent=(p?'PMOS: a gate sufficiently below the source forms a hole channel.':'NMOS: a gate sufficiently above the source forms an electron channel.')+' Oxide insulates the gate. Its electric field changes the charge distribution in silicon. Arrows show the conceptual field direction, not carrier motion.';
   }
-  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{stop();clearSelection();clearPartTooltip();state.view=b.dataset.view;state.inspect='all';state.net='all';update();}));
-  $$('[data-net]').forEach(b=>b.addEventListener('click',()=>{clearSelection();state.net=b.dataset.net;state.inspect='all';state.step=7;update();}));
-  $('[data-schematic]').addEventListener('click',e=>{if(e.target.dataset.clickNet){clearSelection();state.net=e.target.dataset.clickNet;state.inspect='all';state.step=7;update();}});
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{stop();clearSelection();clearPartTooltip();state.view=b.dataset.view;state.net='all';update();}));
+  $$('[data-net]').forEach(b=>b.addEventListener('click',()=>{clearSelection();state.net=b.dataset.net;state.step=7;update();}));
+  $('[data-schematic]').addEventListener('click',e=>{if(e.target.dataset.clickNet){clearSelection();state.net=e.target.dataset.clickNet;state.step=7;update();}});
   $('[data-schematic]').addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)&&e.target.dataset.clickNet){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
   $$('[data-field-device]').forEach(b=>b.addEventListener('click',()=>{state.fieldDevice=b.dataset.fieldDevice;drawField();}));
   $$('[data-guide]').forEach(b=>b.addEventListener('click',()=>{const modes=['doping','nmos','pmos','inverter'];const i=b.dataset.guide==='start'?0:Math.min(3,modes.indexOf(state.mode)+1);$('[data-mode="'+modes[i]+'"]').click();$('[data-guide-note]').textContent=['1/4 · The + means heavier doping, not positive charge.','2/4 · NMOS: n+ source/drain in a p-body. Play the build animation.','3/4 · PMOS: p+ source/drain in an n-well. A low gate turns it on.','4/4 · Select A or Y to trace the connections between the two devices.'][i];}));
@@ -515,7 +502,7 @@
     showSelection();
     $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
     $$('[data-input]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.input)===state.input)));
-    $('[data-step]').value=state.step;$('[data-inspect]').value=state.inspect;$('[data-cut]').checked=state.cut;
+    $('[data-step]').value=state.step;$('[data-cut]').checked=state.cut;
     $('[data-spread]').value=state.spread;$('[data-zoom]').value=state.zoom;
     $('[data-device]').value=state.device;
     $$('[data-visible]').forEach(c=>{c.checked=state[c.dataset.visible];});
@@ -529,10 +516,7 @@
       $('[data-note]').textContent='The + in p+ and n+ means a higher dopant concentration. Dot counts illustrate relative density only.';
     }else if(three){
       const solo=state.device!=='all';
-      $('.detail').textContent=state.inspect==='all'
-        ? solo&&state.step===7 ? state.mode!=='inverter'?steps[7]:state.device==='pmos' ? 'PMOS · P+ source/drain · n-well body' : 'NMOS · N+ source/drain · p-type body'
-          : steps[state.step]
-        : explanations[state.inspect];
+      $('.detail').textContent=steps[state.step];
       if(solo){
         const channelOn=state.device==='pmos'?state.input===0:state.input===1;
         $('[data-output]').textContent=state.device.toUpperCase()+(channelOn?' · Channel ON':' · Channel OFF');
@@ -549,24 +533,23 @@
   }
   function stop(){clearInterval(timer);timer=null;}
   $('[data-device]').addEventListener('change',()=>{
-    state.device=$('[data-device]').value;state.inspect='all';update();save();
+    state.device=$('[data-device]').value;update();save();
   });
   $$('[data-visible]').forEach(c=>c.addEventListener('change',()=>{state[c.dataset.visible]=c.checked;update();save();}));
-  $$('[data-mode]').forEach(button=>button.addEventListener('click',()=>{stop();clearSelection();clearPartTooltip();state.mode=button.dataset.mode;state.device=state.mode==='inverter'?'all':state.mode;state.view='3d';state.net='all';state.inspect='all';state.step=7;state.terminal='';update();save();}));
+  $$('[data-mode]').forEach(button=>button.addEventListener('click',()=>{stop();clearSelection();clearPartTooltip();state.mode=button.dataset.mode;state.device=state.mode==='inverter'?'all':state.mode;state.view='3d';state.net='all';state.step=7;state.terminal='';update();save();}));
   $$('[data-input]').forEach(button=>button.addEventListener('click',()=>{state.input=Number(button.dataset.input);update(true);save();}));
   $$('[data-action]').forEach(button=>button.addEventListener('click',()=>{
     switch(button.dataset.action){
-      case 'play':if(timer)stop();else{clearSelection();state.step=0;state.inspect='all';state.net='all';timer=setInterval(()=>{state.step++;if(state.step===7)stop();update();save();},2300);}break;
+      case 'play':if(timer)stop();else{clearSelection();state.step=0;state.net='all';timer=setInterval(()=>{state.step++;if(state.step===7)stop();update();save();},2300);}break;
       case 'iso':state.view='3d';state.yaw=-0.35;state.pitch=0.8;state.zoom=1;break;
       case 'top':state.view='layout';state.yaw=0;state.pitch=Math.PI/2;break;
       case 'side':state.view='3d';state.yaw=0;state.pitch=0.22;break;
     }update();save();
   }));
-  for(const [selector,key]of [['[data-step]','step'],['[data-inspect]','inspect'],['[data-cut]','cut'],['[data-spread]','spread'],['[data-zoom]','zoom']]){
+  for(const [selector,key]of [['[data-step]','step'],['[data-cut]','cut'],['[data-spread]','spread'],['[data-zoom]','zoom']]){
     $(selector).addEventListener('input',()=>{
-      state[key]=key==='inspect'?$(selector).value:key==='cut'?$(selector).checked:Number($(selector).value);
-      if(key==='step'){stop();state.inspect='all';}
-      if(key==='inspect'){clearSelection();stop();state.step=7;}
+      state[key]=key==='cut'?$(selector).checked:Number($(selector).value);
+      if(key==='step')stop();
       update();
     });$(selector).addEventListener('change',save);
   }
@@ -651,7 +634,6 @@
   $('[data-clear-part]').addEventListener('click',()=>{clearSelection();update();});
   function selectPart(hit,terminal=''){
     stop();
-    state.inspect='all';
     state.net='all';
     if(!hit||activePart?.key===partKey(hit))clearSelection();
     else {activePart={key:partKey(hit),label:partLabel(hit)};state.terminal=terminal;}
