@@ -46,6 +46,7 @@
 <div class="visual" data-panel="visual" hidden>
 <canvas class="cursor-interaction" aria-label="Drag to rotate the three-dimensional CMOS inverter; view buttons provide keyboard alternatives"></canvas>
 <svg role="img" aria-label="MOSFET cross section"></svg>
+<div class="part-tooltip" hidden></div>
 </div>
 <div class="viz-row" data-panel="device" hidden>
 <span>Gate input</span>
@@ -62,7 +63,6 @@
 <div data-panel="three" hidden>
 <div class="viz-row" aria-label="Visible parts">
 <label class="form-label">Device <select class="form-select" data-device><option value="all">Both</option><option value="pmos">PMOS only</option><option value="nmos">NMOS only</option></select></label>
-<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="markers"><span>Markers</span></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="body" checked><span>Body / well</span></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="gate" checked><span>Gate / oxide</span></label>
 <label class="form-check"><input type="checkbox" class="form-check-input" data-visible="contacts" checked><span>Contacts</span></label>
@@ -117,7 +117,7 @@
   const $$=selector=>[...root.querySelectorAll(selector)];
   const svg=$('.visual svg'),canvas=$('canvas'),visual=$('.visual');
   const state={mode:'inverter',input:0,terminal:'',step:7,inspect:'all',cut:true,spread:0,zoom:1,yaw:-0.35,pitch:0.8,
-    view:'3d',net:'all',fieldDevice:'nmos',device:'all',markers:false,body:true,gate:true,contacts:true,metal:true};
+    view:'3d',net:'all',fieldDevice:'nmos',device:'all',body:true,gate:true,contacts:true,metal:true};
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ns='http://www.w3.org/2000/svg';
   let palette={},timer=null,gl=null,program=null,buffer=null,vertices=[],boxes=[];
@@ -156,7 +156,7 @@
     if(explanations[saved.inspect])state.inspect=saved.inspect;
     if(['','S','D','G','B'].includes(saved.terminal))state.terminal=saved.terminal;
     if(['all','pmos','nmos'].includes(saved.device))state.device=saved.device;
-    for(const key of ['markers','body','gate','contacts','metal'])if(typeof saved[key]==='boolean')state[key]=saved[key];
+    for(const key of ['body','gate','contacts','metal'])if(typeof saved[key]==='boolean')state[key]=saved[key];
   }
   try{restore(JSON.parse(localStorage.getItem('cmos-learning-lab')));}catch{}
   function save() {
@@ -361,7 +361,9 @@
   }
   function render3D(){
     if(!gl&&!initGL())return;
-    const {gateY,metalY}=makeGeometry(),{matrix,project,w,h}=transform();
+    makeGeometry();
+    const {matrix,project,w,h}=transform();
+    pickMatrix=matrix;
     vertices=[];
     const colorMap={},backgroundRGB=rgb(palette.bg);
     for(const box of boxes)colorMap[box.id]??=rgb(material(box.id));
@@ -386,57 +388,7 @@
     gl.drawArrays(gl.TRIANGLES,0,vertices.length/9);
     svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.replaceChildren();
     if(state.net==='flow')drawFlow(project);
-    if(!state.markers)return;
-    if(state.mode!=='inverter'){
-      const p=state.mode==='pmos';
-      const labels=state.body?[[p&&state.step===0?'p-substrate':'B · '+(p?'n-well':'p-body'),-2,-.6,0]]:[];
-      if(state.step>=2)labels.push(['S · '+(p?'p+':'n+'),-1.3,0,-.2]);
-      if(state.step>=3)labels.push(['D · '+(p?'p+':'n+'),1.3,0,-.2]);
-      if(state.step>=4&&state.gate)labels.push(['G · poly',0,gateY+.18,-.5]);
-      if(state.step>=5)labels.push([p?'n+ body tap':'p+ body tap',-2.55,0,-.2]);
-      labels.forEach(([name,x,y,z],i)=>{const pos=project(x,y,z),left=x<0,tx=left?6:w-6,ty=35+i*29;line(svg,left?100:w-100,ty,...pos,palette.ink,{'stroke-width':.8});textAt(svg,name,tx,ty,{'text-anchor':left?'start':'end',class:'text-small'});});
-      if(state.step===7&&state.metal)for(const [net,x,z]of [['B',-3.7,-.2],['S',-2.05,-1.4],['G',0,-2.05],['D',3.7,-.2]]){
-        const [px,py]=project(x,metalY+.16,z);rect(svg,px-10,py-23,20,20,palette.bg);textAt(svg,net,px,py-13,{'font-weight':600});
-      }
-      return;
-    }
-    // Keep labels horizontal in fixed gutters and link them to actual 3D positions.
-    const labels=[];
-    if(state.step>=1)labels.push(['B · n-well',-2,-0.65,-1.7,'left']);
-    if(state.step>=2)labels.push(['PMOS · S',-1.3,0,-1.7,'left']);
-    if(state.step>=(state.mode==='pmos'?3:2))labels.push(['PMOS · D',1.3,0,-1.7,'right']);
-    if(state.step>=(state.mode==='nmos'?2:3))labels.push(['NMOS · S',-1.3,0,1.7,'left']);
-    if(state.step>=3)labels.push(['NMOS · D',1.3,0,1.7,'right']);
-    labels.push(['B · p-body',2,-0.65,1.7,'right']);
-    if(state.step>=4)labels.push(['G · poly',0,gateY+0.18,state.device==='pmos'?-1.7:state.device==='nmos'?1.7:0,'right']);
-    if(state.step>=5)labels.push(['N+ tap',-2.9,0,-1.7,'left'],['P+ tap',-2.9,0,1.7,'left']);
-    const compact=w<500;
-    for(const side of ['left','right']){
-      const items=labels.filter(a=>a[4]===side)
-        .filter(a=>state.device==='all'||(state.device==='pmos'?a[3]<0:a[3]>0))
-        .filter(a=>state.body||!a[0].startsWith('B'))
-        .filter(a=>state.gate||!a[0].startsWith('G'))
-        .map(a=>({text:a[0],p:project(a[1],a[2],a[3])})).sort((a,b)=>a.p[1]-b.p[1]);
-      let lastY=25;
-      for(let i=0;i<items.length;i++){
-        const item=items[i],y=clamp(item.p[1],lastY,h-24-(items.length-1-i)*25);lastY=y+25;
-        const x=side==='left'?4:w-4,edge=side==='left'?(compact?74:90):w-(compact?74:90);
-        line(svg,edge,y,item.p[0],item.p[1],palette.ink,{'stroke-width':0.8});
-        svg.append(element('circle',{cx:item.p[0],cy:item.p[1],r:2,fill:palette.ink}));
-        textAt(svg,compact?item.text.replace('PMOS · ','P·').replace('NMOS · ','N·'):item.text,x,y,
-          {'text-anchor':side==='left'?'start':'end',class:'text-small'});
-      }
-    }
-    textAt(svg,state.cut?'Cutaway · exposed silicon cross-section':'Solid · shared silicon surface',w/2,14,{class:'text-small'});
-    if(state.step===7&&state.device==='all'&&state.metal){
-      textAt(svg,'A = '+state.input+'   →   Y = '+(1-state.input),w/2,h-12,{'font-weight':500});
-      for(const [name,x,z]of [['VDD',3.45,-3],['VSS',3.45,3],['A',-3.55,0],['Y',3.6,0]]){
-        const [px,py]=project(x,metalY+0.16,z);
-        const labelX=clamp(px,20,w-20),labelY=clamp(py-12,32,h-35),labelWidth=name.length*8+10;
-        rect(svg,labelX-labelWidth/2,labelY-9,labelWidth,18,palette.bg);
-        textAt(svg,name,labelX,labelY,{class:'text-small','font-weight':500});
-      }
-    }
+    refreshPartTooltip();
   }
   function deviceDetail(){
     const pmos=state.mode==='pmos'||(state.mode==='inverter'&&state.device==='pmos'),on=pmos?state.input===0:state.input===1;
@@ -542,6 +494,7 @@
     $('[data-panel="three"]').hidden=!three;
     $('[data-panel="legend"]').hidden=doping;
     canvas.hidden=!three;
+    if(!three)clearPartTooltip();
     $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
     $$('[data-input]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.input)===state.input)));
     $$('[data-terminal]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.terminal===state.terminal)));
@@ -569,7 +522,7 @@
       }else{
         $('[data-output]').textContent=state.input?'NMOS ON · PMOS OFF · Y = 0':'PMOS ON · NMOS OFF · Y = 1';
       }
-      $('[data-note]').textContent='Drag to rotate. Muted body colors indicate lighter doping; darker implants indicate heavier doping. Cutaway removes silicon to reveal embedded regions. Layer separation and dielectric are simplified.';
+      $('[data-note]').textContent='Drag to rotate. Hover over a part to see its name. Muted body colors indicate lighter doping; darker implants indicate heavier doping. Cutaway removes silicon to reveal embedded regions. Layer separation and dielectric are simplified.';
       render3D();
     }else{
       deviceView(animated);$('.detail').textContent=deviceDetail();
@@ -601,18 +554,78 @@
       update();
     });$(selector).addEventListener('change',save);
   }
+  const tooltip=$('.part-tooltip');
+  let pickMatrix=null, hoverPoint=null;
+  const partNames={
+    substrate:'p-type substrate',well:'n-well',ps:'PMOS source (p+)',pd:'PMOS drain (p+)',
+    ns:'NMOS source (n+)',nd:'NMOS drain (n+)',ntap:'n+ well tap',ptap:'p+ substrate tap',
+    poly:'Polysilicon gate',oxide:'Gate oxide',pchannel:'PMOS channel',nchannel:'NMOS channel'
+  };
+  function clearPartTooltip(){
+    hoverPoint=null;
+    tooltip.hidden=true;
+  }
+  function refreshPartTooltip(){
+    tooltip.hidden=true;
+    if(!hoverPoint||!pickMatrix||canvas.hidden)return;
+    const bounds=canvas.getBoundingClientRect();
+    const x=hoverPoint[0]-bounds.left,y=hoverPoint[1]-bounds.top;
+    if(x<0||y<0||x>=bounds.width||y>=bounds.height)return;
+    const matrix=pickMatrix;
+    // Invert the orthographic projection along its three perpendicular axes.
+    const screenX=2*x/bounds.width-1-matrix[12];
+    const screenY=1-2*y/bounds.height-matrix[13];
+    const right=[matrix[0],matrix[4],matrix[8]];
+    const up=[matrix[1],matrix[5],matrix[9]];
+    const depth=[matrix[2],matrix[6],matrix[10]];
+    const lengthSquared=axis=>axis.reduce((sum,value)=>sum+value*value,0);
+    const rightScale=screenX/lengthSquared(right),upScale=screenY/lengthSquared(up);
+    const depthScale=(-1-matrix[14])/lengthSquared(depth);
+    const origin=right.map((value,i)=>value*rightScale+up[i]*upScale+depth[i]*depthScale);
+    const direction=depth.map(value=>value/Math.sqrt(lengthSquared(depth)));
+    let closest=40,hit=null;
+    for(const box of boxes){
+      let entry=0,exit=closest;
+      for(const [i,axis] of ['x','y','z'].entries()){
+        const low=box[axis+'0'],high=box[axis+'1'];
+        if(Math.abs(direction[i])<1e-9){
+          if(origin[i]<low||origin[i]>high){entry=Infinity;break;}
+          continue;
+        }
+        const a=(low-origin[i])/direction[i],b=(high-origin[i])/direction[i];
+        entry=Math.max(entry,Math.min(a,b));
+        exit=Math.min(exit,Math.max(a,b));
+        if(entry>exit)break;
+      }
+      if(entry<=exit){closest=entry;hit=box;}
+    }
+    if(!hit)return;
+    const liY=.7+state.spread;
+    const layer=hit.id==='metal'?'Metal 1':hit.y0<liY?'Licon':hit.y0===liY?'Local interconnect (LI1)':'Mcon';
+    tooltip.textContent=partNames[hit.id]||layer+(hit.net?' · '+hit.net:'');
+    tooltip.hidden=false;
+    const maxX=Math.max(0,bounds.width-tooltip.offsetWidth);
+    tooltip.style.left=Math.min(x+12,maxX)+'px';
+    tooltip.style.top=(y+tooltip.offsetHeight+12<bounds.height?y+12:Math.max(0,y-tooltip.offsetHeight-8))+'px';
+  }
   const pointers=new Map();let pinch=null;
   canvas.addEventListener('pointerdown',e=>{
+    clearPartTooltip();
     canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);
     if(pointers.size===2){const[a,b]=[...pointers.values()];pinch={distance:Math.hypot(a[0]-b[0],a[1]-b[1]),zoom:state.zoom};}
   });
   canvas.addEventListener('pointermove',e=>{
-    const previous=pointers.get(e.pointerId);if(!previous)return;
+    const previous=pointers.get(e.pointerId);
+    if(!previous){
+      if(e.pointerType!=='touch'){hoverPoint=[e.clientX,e.clientY];refreshPartTooltip();}
+      return;
+    }
     pointers.set(e.pointerId,[e.clientX,e.clientY]);
     if(pointers.size===2&&pinch){const[a,b]=[...pointers.values()];state.zoom=clamp(pinch.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/Math.max(1,pinch.distance),0.75,1.6);}
     else{state.yaw+=(e.clientX-previous[0])*0.009;state.pitch=clamp(state.pitch+(e.clientY-previous[1])*0.009,0.12,Math.PI/2);}
     render3D();$('[data-zoom]').value=state.zoom;
   });
+  canvas.addEventListener('pointerleave',clearPartTooltip);
   for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,e=>{pointers.delete(e.pointerId);pinch=null;save();});
   canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*0.001),0.75,1.6);render3D();$('[data-zoom]').value=state.zoom;save();},{passive:false});
   new ResizeObserver(()=>update()).observe(visual);
