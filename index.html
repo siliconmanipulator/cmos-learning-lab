@@ -46,12 +46,7 @@
 <aside class="lab-controls" aria-label="Build and inspection controls">
 <div data-panel="three" hidden>
 <div class="fields">
-<label class="form-label">Build step<select class="form-select" data-step>
-<option value="0">1 · p-type silicon</option><option value="1">2 · Embedded n-well</option>
-<option value="2">3 · P+ source / drain</option><option value="3">4 · N+ source / drain</option>
-<option value="4">5 · Insulator + common gate</option><option value="5">6 · Body contacts</option>
-<option value="6">7 · Contact stack</option><option value="7" selected>8 · Metal + inverter</option>
-</select></label>
+
 <label class="form-label">Upper-layer separation<input class="form-range" type="range" min="0" max="1" value="0" step="0.01" data-spread></label>
 <label class="form-label">Zoom<input class="form-range" type="range" min="0.75" max="1.6" value="1" step="0.01" data-zoom></label>
 </div>
@@ -67,13 +62,11 @@
 <div class="viz-row trace-controls" aria-label="Trace circuit paths" hidden><button class="btn" data-net="body">Body → tap → supply</button><button class="btn" data-net="flow">ON path</button></div>
 <section class="lab-reference" aria-labelledby="lab-reference-title">
 <h3 id="lab-reference-title">Explore the circuit</h3>
-<details data-lessons><summary>Connections and current path</summary>
+<details data-lessons open><summary>Connections and current path</summary>
 <div class="viz-row"><button class="btn" data-net="all">All nets</button><button class="btn" data-net="A">A · gate</button><button class="btn" data-net="Y">Y · drain</button><button class="btn" data-net="VDD">VDD</button><button class="btn" data-net="VSS">VSS</button></div>
 <svg data-schematic viewBox="0 0 600 190" role="img" aria-label="Clickable simplified transistor connection diagram"></svg><p data-flow></p>
 </details>
-<details data-closeup><summary>How does the gate create a channel? · zoom</summary><div class="viz-row"><button class="btn" data-field-device="nmos">NMOS</button><button class="btn" data-field-device="pmos">PMOS</button></div><svg data-field viewBox="0 0 600 210" role="img" aria-label="Gate field and channel close-up"></svg><p data-field-note></p></details>
-<details><summary>Contact staircase · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#87a294" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — longer connections</text><text x="300" y="73">4 · mcon — LI1 to M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly to LI1</text><text x="300" y="175">1 · doped silicon or poly</text></g></svg><p>A contact is a conductive bridge through an insulating layer. Via1 connects M1 to M2; this model stops at M1. The gate contact sits on a poly extension outside the active channel.</p></details>
-<details><summary>Compare with a real Magic layout</summary><p>This app uses teaching colors. Magic colors depend on the technology file. The original screenshot below labels N-WELL, pdiff, ndiff, Poly and metal1. Click the image to enlarge it.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>In this app</th><th>Identify in Magic</th></tr><tr><td>Lightly doped n-well</td><td>Well enclosure around the PMOS</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; a poly crossing defines a transistor</td></tr><tr><td>Gate</td><td>Poly strip crossing diffusion</td></tr><tr><td>Blue wiring</td><td>Metal 1, connected to diffusion/poly through contacts</td></tr></table><p>The build order explains the structure; it is not a fabrication recipe. Isolation (STI), dielectric, implants and design rules are simplified. Real layouts require DRC and LVS.</p></details>
+<details data-closeup open><summary>How does the gate create a channel? · zoom</summary><div class="viz-row"><button class="btn" data-field-device="nmos">NMOS</button><button class="btn" data-field-device="pmos">PMOS</button></div><svg data-field viewBox="0 0 600 210" role="img" aria-label="Gate field and channel close-up"></svg><p data-field-note></p></details>
 </section>
 </aside>
 <div class="lab-model">
@@ -115,6 +108,10 @@
 </div>
 
 <span class="text-small text-muted" data-note></span>
+<section class="lab-reference layout-reference" aria-label="Layout references">
+<details open><summary>Contact staircase · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#87a294" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — longer connections</text><text x="300" y="73">4 · mcon — LI1 to M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly to LI1</text><text x="300" y="175">1 · doped silicon or poly</text></g></svg><p>A contact is a conductive bridge through an insulating layer. Via1 connects M1 to M2; this model stops at M1. The gate contact sits on a poly extension outside the active channel.</p></details>
+<details open><summary>Compare with a real Magic layout</summary><p>This app uses teaching colors. Magic colors depend on the technology file. The original screenshot below labels N-WELL, pdiff, ndiff, Poly and metal1. Click the image to enlarge it.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>In this app</th><th>Identify in Magic</th></tr><tr><td>Lightly doped n-well</td><td>Well enclosure around the PMOS</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; a poly crossing defines a transistor</td></tr><tr><td>Gate</td><td>Poly strip crossing diffusion</td></tr><tr><td>Blue wiring</td><td>Metal 1, connected to diffusion/poly through contacts</td></tr></table><p>The build order explains the structure; it is not a fabrication recipe. Isolation (STI), dielectric, implants and design rules are simplified. Real layouts require DRC and LVS.</p></details>
+</section>
 </div>
 </div>
 </section>
@@ -405,8 +402,6 @@
       ?'PMOS: lowering the gate sufficiently below the source turns the channel on.'
       :'NMOS: raising the gate sufficiently above the source turns the channel on.');
   }
-  const stepTitles=['p-type silicon','Embedded n-well','P+ source / drain','N+ source / drain','Oxide + common gate','Body taps','Contact stack','Metal + inverter'];
-  function soloTitles(){return ['p-type silicon',state.mode==='pmos'?'Embedded n-well':'P-body + isolation boundary','Source implant','Drain implant','Oxide + gate','Body tap','Contact stack','Separate terminal wiring'];}
   function soloDescriptions(){const p=state.mode==='pmos';return [
     'P-type silicon base. No source or drain implants yet.',
     p?'Create an embedded n-well, the PMOS body. The surrounding p-substrate belongs to the chip; its remote tap is not shown.':'The p-substrate forms the NMOS body. The outer boundary is conceptual; isolation is not explicitly modeled.',
@@ -488,7 +483,6 @@
     $$('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===state.view)));
     updateLessons();
     const steps=state.mode==='inverter'?buildDescriptions:soloDescriptions();
-    [...$('[data-step]').options].forEach((o,i)=>{o.textContent=(i+1)+' · '+(state.mode==='inverter'?stepTitles:soloTitles())[i];});
     $('[data-panel="doping"]').hidden=!doping;
     $('[data-panel="visual"]').hidden=doping||operation;
     $('[data-panel="device"]').hidden=doping||operation||(three&&state.step<7);
@@ -504,7 +498,7 @@
     showSelection();
     $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
     $$('[data-input]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.input)===state.input)));
-    $('[data-step]').value=state.step;$('[data-cut]').checked=state.cut;
+    $('[data-cut]').checked=state.cut;
     $('[data-spread]').value=state.spread;$('[data-zoom]').value=state.zoom;
     $('[data-device]').value=state.device;
     $$('[data-visible]').forEach(c=>{c.checked=state[c.dataset.visible];});
@@ -548,10 +542,9 @@
       case 'side':state.view='3d';state.yaw=0;state.pitch=0.22;break;
     }update();save();
   }));
-  for(const [selector,key]of [['[data-step]','step'],['[data-cut]','cut'],['[data-spread]','spread'],['[data-zoom]','zoom']]){
+  for(const [selector,key]of [['[data-cut]','cut'],['[data-spread]','spread'],['[data-zoom]','zoom']]){
     $(selector).addEventListener('input',()=>{
       state[key]=key==='cut'?$(selector).checked:Number($(selector).value);
-      if(key==='step')stop();
       update();
     });$(selector).addEventListener('change',save);
   }

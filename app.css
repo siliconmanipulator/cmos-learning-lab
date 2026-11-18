@@ -43,3 +43,12 @@ details{border:1px solid var(--border);border-radius:8px;padding:12px}summary{cu
   .lab-model{grid-row:1}
   .lab-controls{grid-row:2}
 }
+@media(min-width:741px){
+  body{max-width:1440px}
+  .lab-columns:not(.full-width){grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,32px)}
+  #cmos-learning-lab .lab-model .visual:not(.cross-section){height:clamp(360px,38vw,535px)}
+}
+.lab-reference details{padding:clamp(12px,1.4vw,20px)}
+.lab-reference svg{display:block;width:100%;height:auto;margin:12px 0}
+.lab-reference img{display:block}
+.lab-controls,.lab-model{align-content:start}
