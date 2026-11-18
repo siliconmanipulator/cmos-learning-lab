@@ -34,7 +34,7 @@ details{border:1px solid var(--border);border-radius:8px;padding:12px}summary{cu
 .lab-reference table{width:100%;table-layout:fixed}
 .lab-reference td,.lab-reference th{overflow-wrap:anywhere}
 #cmos-learning-lab [data-views]{padding-top:10px;border-top:1px solid var(--border)}
-#cmos-learning-lab .lab-model .visual{height:clamp(420px,58vw,640px);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+#cmos-learning-lab .lab-model .visual{height:clamp(420px,58vw,640px);border:0;border-radius:0;overflow:hidden}
 #cmos-learning-lab .lab-model .cross-section{height:390px}
 .trace-controls{padding-top:10px;border-top:1px solid var(--border)}
 .lab-controls .lab-reference{padding-top:10px;border-top:1px solid var(--border)}
@@ -45,10 +45,12 @@ details{border:1px solid var(--border);border-radius:8px;padding:12px}summary{cu
 }
 @media(min-width:741px){
   body{max-width:1440px}
-  .lab-columns:not(.full-width){grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,32px)}
-  #cmos-learning-lab .lab-model .visual:not(.cross-section){height:clamp(360px,38vw,535px)}
+  .lab-columns:not(.full-width){grid-template-columns:minmax(0,35fr) minmax(0,65fr);gap:clamp(16px,2vw,32px)}
+  #cmos-learning-lab .lab-model .visual:not(.cross-section){height:clamp(420px,45vw,620px)}
 }
 .lab-reference details{padding:clamp(12px,1.4vw,20px)}
 .lab-reference svg{display:block;width:100%;height:auto;margin:12px 0}
 .lab-reference img{display:block}
 .lab-controls,.lab-model{align-content:start}
+
+[data-note]:empty{display:none} .lab-model .control-group{padding:14px 18px} .lab-reference details:not([open]){padding-block:12px} .lab-reference summary:hover{color:var(--blue)}

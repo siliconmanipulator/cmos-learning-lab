@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Learn CMOS transistors and explore their 3D layout."><title>CMOS Learning Lab</title><link rel="stylesheet" href="app.css?v=balanced-2"></head><body>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Learn CMOS transistors and explore their 3D layout."><title>CMOS Learning Lab</title><link rel="stylesheet" href="app.css?v=studio35"></head><body>
 <section id="cmos-learning-lab">
 <style>
 #cmos-learning-lab { display:grid; gap:calc(var(--font-size-base)*0.75); }
@@ -67,6 +67,8 @@
 <svg data-schematic viewBox="0 0 600 190" role="img" aria-label="Clickable simplified transistor connection diagram"></svg><p data-flow></p>
 </details>
 <details data-closeup open><summary>How does the gate create a channel? · zoom</summary><div class="viz-row"><button class="btn" data-field-device="nmos">NMOS</button><button class="btn" data-field-device="pmos">PMOS</button></div><svg data-field viewBox="0 0 600 210" role="img" aria-label="Gate field and channel close-up"></svg><p data-field-note></p></details>
+<details><summary>Contact staircase · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#87a294" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — longer connections</text><text x="300" y="73">4 · mcon — LI1 to M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly to LI1</text><text x="300" y="175">1 · doped silicon or poly</text></g></svg><p>A contact is a conductive bridge through an insulating layer. Via1 connects M1 to M2; this model stops at M1. The gate contact sits on a poly extension outside the active channel.</p></details>
+<details><summary>Compare with a real Magic layout</summary><p>This app uses teaching colors. Magic colors depend on the technology file. The original screenshot below labels N-WELL, pdiff, ndiff, Poly and metal1. Click the image to enlarge it.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>In this app</th><th>Identify in Magic</th></tr><tr><td>Lightly doped n-well</td><td>Well enclosure around the PMOS</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; a poly crossing defines a transistor</td></tr><tr><td>Gate</td><td>Poly strip crossing diffusion</td></tr><tr><td>Blue wiring</td><td>Metal 1, connected to diffusion/poly through contacts</td></tr></table><p>The build order explains the structure; it is not a fabrication recipe. Isolation (STI), dielectric, implants and design rules are simplified. Real layouts require DRC and LVS.</p></details>
 </section>
 </aside>
 <div class="lab-model">
@@ -108,10 +110,7 @@
 </div>
 
 <span class="text-small text-muted" data-note></span>
-<section class="lab-reference layout-reference" aria-label="Layout references">
-<details open><summary>Contact staircase · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#87a294" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — longer connections</text><text x="300" y="73">4 · mcon — LI1 to M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly to LI1</text><text x="300" y="175">1 · doped silicon or poly</text></g></svg><p>A contact is a conductive bridge through an insulating layer. Via1 connects M1 to M2; this model stops at M1. The gate contact sits on a poly extension outside the active channel.</p></details>
-<details open><summary>Compare with a real Magic layout</summary><p>This app uses teaching colors. Magic colors depend on the technology file. The original screenshot below labels N-WELL, pdiff, ndiff, Poly and metal1. Click the image to enlarge it.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>In this app</th><th>Identify in Magic</th></tr><tr><td>Lightly doped n-well</td><td>Well enclosure around the PMOS</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; a poly crossing defines a transistor</td></tr><tr><td>Gate</td><td>Poly strip crossing diffusion</td></tr><tr><td>Blue wiring</td><td>Metal 1, connected to diffusion/poly through contacts</td></tr></table><p>The build order explains the structure; it is not a fabrication recipe. Isolation (STI), dielectric, implants and design rules are simplified. Real layouts require DRC and LVS.</p></details>
-</section>
+
 </div>
 </div>
 </section>
@@ -345,7 +344,7 @@
     const w=visual.clientWidth,h=visual.clientHeight;
     const yaw=state.view==='layout'?0:state.yaw,pitch=state.view==='layout'?Math.PI/2:state.pitch;
     const cy=Math.cos(yaw),sy=Math.sin(yaw),sp=Math.sin(pitch),cp=Math.cos(pitch);
-    const scale=Math.min((w-100)/10.5,(h-76)/9.5)*state.zoom*(state.mode==='inverter'?1:1.45);
+    const scale=Math.min((w-52)/10.5,(h-44)/8.6)*state.zoom*(state.mode==='inverter'?1:1.45);
     const fx=2*scale/w,fy=2*scale/h,midY=state.spread*0.8;
     const centerZ=state.mode!=='inverter'?0:state.device==='pmos'?-1.9:state.device==='nmos'?1.9:0;
     const matrix=new Float32Array([cy*fx,-sy*sp*fy,-sy*cp/20,0, 0,cp*fy,-sp/20,0,
@@ -519,7 +518,7 @@
       }else{
         $('[data-output]').textContent=state.input?'NMOS ON · PMOS OFF · Y = 0':'PMOS ON · NMOS OFF · Y = 1';
       }
-      $('[data-note]').textContent=state.view==='layout'?'Hover to identify a layer. Click or tap to highlight it.':'Drag to rotate. Hover to identify a part. Click or tap to highlight it.';
+      $('[data-note]').textContent='';
       render3D();
     }else{
       deviceView(animated);$('.detail').textContent=deviceDetail();
