@@ -41,40 +41,9 @@
 <div class="density"></div>
 <div class="viz-row"><span>Dots represent doping density</span><span>Fewer dots → lighter doping</span><span>More dots → heavier doping</span></div>
 </div>
-<div class="viz-row" data-views><button class="btn" data-view="3d">3D construction</button><button class="btn" data-view="layout">Layout build · top</button><button class="btn" data-view="operation">Voltage lab · side view</button><button class="btn" data-view="cross">S / D / G / B close-up</button></div>
-<section data-operation hidden></section>
-<div class="visual" data-panel="visual" hidden>
-<canvas class="cursor-interaction" aria-label="Drag to rotate the three-dimensional CMOS inverter; view buttons provide keyboard alternatives"></canvas>
-<svg role="img" aria-label="MOSFET cross section"></svg>
-<div class="part-tooltip" hidden></div>
-</div>
-<div class="viz-row" data-panel="device" hidden>
-<span>Gate input</span>
-<button class="btn" type="button" data-input="0" aria-pressed="true">0 · LOW</button>
-<button class="btn" type="button" data-input="1" aria-pressed="false">1 · HIGH</button>
-<span data-output aria-live="polite"></span>
-</div>
-<div class="viz-row" data-panel="terminals" hidden aria-label="Inspect transistor terminal">
-<button class="btn" type="button" data-terminal="S" aria-pressed="false">S · Source</button>
-<button class="btn" type="button" data-terminal="D" aria-pressed="false">D · Drain</button>
-<button class="btn" type="button" data-terminal="G" aria-pressed="false">G · Gate</button>
-<button class="btn" type="button" data-terminal="B" aria-pressed="false">B · Body</button>
-</div>
+<div class="lab-columns">
+<aside class="lab-controls" aria-label="Build and inspection controls">
 <div data-panel="three" hidden>
-<div class="viz-row" aria-label="Visible parts">
-<label class="form-label">Device <select class="form-select" data-device><option value="all">Both</option><option value="pmos">PMOS only</option><option value="nmos">NMOS only</option></select></label>
-<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="body" checked><span>Body / well</span></label>
-<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="gate" checked><span>Gate / oxide</span></label>
-<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="contacts" checked><span>Contacts</span></label>
-<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="metal" checked><span>Metal</span></label>
-</div>
-<div class="viz-row">
-<button type="button" class="btn btn-primary" data-action="play">Build animation</button>
-<button type="button" class="btn" data-action="iso">3D</button>
-<button type="button" class="btn" data-action="top">Top</button>
-<button type="button" class="btn" data-action="side">Side</button>
-<label class="form-check"><input class="form-check-input" type="checkbox" data-cut checked><span class="form-check-label">Cutaway · look inside</span></label>
-</div>
 <div class="fields">
 <label class="form-label">Build step<select class="form-select" data-step>
 <option value="0">1 · p-type silicon</option><option value="1">2 · Embedded n-well</option>
@@ -99,6 +68,40 @@
 <span><i class="swatch gate"></i>Gate poly</span><span><i class="swatch wire"></i>Metal</span>
 </div>
 <div class="detail" aria-live="polite"></div>
+<div class="part-selection viz-row" hidden>
+<strong data-selected-part aria-live="polite"></strong><button class="btn" type="button" data-clear-part>Clear selection</button>
+</div>
+</aside>
+<div class="lab-model">
+<div class="viz-row" data-views><button class="btn" data-view="3d">3D construction</button><button class="btn" data-view="layout">Layout build · top</button><button class="btn" data-view="operation">Voltage lab · side view</button><button class="btn" data-view="cross">S / D / G / B close-up</button></div>
+<section data-operation hidden></section>
+<div class="visual" data-panel="visual" hidden>
+<canvas class="cursor-interaction" aria-label="Drag to rotate the three-dimensional CMOS inverter; view buttons provide keyboard alternatives"></canvas>
+<svg role="img" aria-label="MOSFET cross section"></svg>
+<div class="part-tooltip" hidden></div>
+</div>
+<div class="viz-row" data-panel="device" hidden>
+<span>Gate input</span>
+<button class="btn" type="button" data-input="0" aria-pressed="true">0 · LOW</button>
+<button class="btn" type="button" data-input="1" aria-pressed="false">1 · HIGH</button>
+<span data-output aria-live="polite"></span>
+</div>
+<div data-model-controls hidden>
+<div class="viz-row" aria-label="Visible parts">
+<label class="form-label">Device <select class="form-select" data-device><option value="all">Both</option><option value="pmos">PMOS only</option><option value="nmos">NMOS only</option></select></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="body" checked><span>Body / well</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="gate" checked><span>Gate / oxide</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="contacts" checked><span>Contacts</span></label>
+<label class="form-check"><input type="checkbox" class="form-check-input" data-visible="metal" checked><span>Metal</span></label>
+</div>
+<div class="viz-row">
+<button type="button" class="btn btn-primary" data-action="play">Build animation</button>
+<button type="button" class="btn" data-action="iso">3D</button>
+<button type="button" class="btn" data-action="top">Top</button>
+<button type="button" class="btn" data-action="side">Side</button>
+<label class="form-check"><input class="form-check-input" type="checkbox" data-cut checked><span class="form-check-label">Cutaway · look inside</span></label>
+</div>
+</div>
 <details data-lessons open><summary>Connections and current path · hide/show</summary>
 <div class="viz-row"><button class="btn" data-net="all">All nets</button><button class="btn" data-net="A">A · gate</button><button class="btn" data-net="Y">Y · drain</button><button class="btn" data-net="VDD">VDD</button><button class="btn" data-net="VSS">VSS</button><button class="btn" data-net="body">Body → tap → supply</button><button class="btn" data-net="flow">ON path</button></div>
 <svg data-schematic viewBox="0 0 600 190" role="img" aria-label="Clickable simplified transistor connection diagram"></svg><p data-flow></p>
@@ -107,6 +110,8 @@
 <details><summary>Contact staircase · licon → LI1 → mcon → M1</summary><svg viewBox="0 0 600 205" role="img" aria-label="Contact stack, bottom to top"><g stroke="currentColor" stroke-width="1"><path fill="#427eb8" d="M100 20h170v25H100z"/><path fill="#bb852f" d="M170 45h30v45h-30z"/><path fill="#d6a951" d="M140 90h90v22h-90z"/><path fill="#bb852f" d="M170 112h30v45h-30z"/><path fill="#87a294" d="M100 157h170v25H100z"/></g><g fill="currentColor" font-size="14"><text x="300" y="38">5 · Metal 1 — longer connections</text><text x="300" y="73">4 · mcon — LI1 to M1</text><text x="300" y="106">3 · LI1 — local interconnect</text><text x="300" y="142">2 · licon — silicon/poly to LI1</text><text x="300" y="175">1 · doped silicon or poly</text></g></svg><p>A contact is a conductive bridge through an insulating layer. Via1 connects M1 to M2; this model stops at M1. The gate contact sits on a poly extension outside the active channel.</p></details>
 <details><summary>Compare with a real Magic layout</summary><p>This app uses teaching colors. Magic colors depend on the technology file. The original screenshot below labels N-WELL, pdiff, ndiff, Poly and metal1. Click the image to enlarge it.</p><a href="magic-inverter.jpg" target="_blank" rel="noopener"><img src="magic-inverter.jpg" loading="lazy" width="791" height="513" style="max-width:100%;height:auto" alt="Annotated Magic inverter layout: well and body taps on the left, diffusion and poly crossing on the right"></a><p class="text-small">Source: <a href="https://github.com/nickson-jose/vsdstdcelldesign" target="_blank" rel="noopener">Nickson Jose · VSD standard-cell design</a>, Images/initial_metal2.jpg, unchanged. <a href="THIRD-PARTY-LICENSE.txt">Apache-2.0 license</a>.</p><table><tr><th>In this app</th><th>Identify in Magic</th></tr><tr><td>Lightly doped n-well</td><td>Well enclosure around the PMOS</td></tr><tr><td>p+ / n+ source-drain</td><td>Active/diffusion; a poly crossing defines a transistor</td></tr><tr><td>Gate</td><td>Poly strip crossing diffusion</td></tr><tr><td>Blue wiring</td><td>Metal 1, connected to diffusion/poly through contacts</td></tr></table><p>The build order explains the structure; it is not a fabrication recipe. Isolation (STI), dielectric, implants and design rules are simplified. Real layouts require DRC and LVS.</p></details>
 <span class="text-small text-muted" data-note></span>
+</div>
+</div>
 </section>
 <script src="operation.js"></script>
 <script src="standalone.js"></script>
@@ -154,7 +159,6 @@
     state.spread=clamp(state.spread,0,1);state.zoom=clamp(state.zoom,0.75,1.6);state.pitch=clamp(state.pitch,0.12,Math.PI/2);
     if(typeof saved.cut==='boolean')state.cut=saved.cut;
     if(explanations[saved.inspect])state.inspect=saved.inspect;
-    if(['','S','D','G','B'].includes(saved.terminal))state.terminal=saved.terminal;
     if(['all','pmos','nmos'].includes(saved.device))state.device=saved.device;
     for(const key of ['body','gate','contacts','metal'])if(typeof saved[key]==='boolean')state[key]=saved[key];
   }
@@ -212,27 +216,31 @@
     const x=w*0.07,bodyW=w*0.86,surface=180,bottom=350;
     const bx=x+w*0.08,sx=x+w*0.27,dx=x+w*0.67;
     const regionW=w*0.15;
+    const region=(id,terminal='')=>({
+      'data-cross-part':id,'data-cross-terminal':terminal,
+      ...(activePart?.key===partKey({id})?{stroke:'#ffd27a','stroke-width':3}:{})
+    });
     const body=pmos?palette.paleN:palette.paleP,active=pmos?palette.p:palette.n;
-    rect(svg,x,surface,bodyW,bottom-surface,palette.paleP);
+    rect(svg,x,surface,bodyW,bottom-surface,palette.paleP,region('substrate',pmos?'':'B'));
     dots(svg,x,surface+70,bodyW,bottom-surface-75,false,palette.p);
     if(pmos){
-      rect(svg,x+10,surface,bodyW-20,130,body,{'stroke':palette.n,'stroke-width':1.5});
+      rect(svg,x+10,surface,bodyW-20,130,body,{'stroke':palette.n,'stroke-width':1.5,...region('well','B')});
       dots(svg,x+12,surface+54,bodyW-24,72,false,palette.n);
       textAt(svg,'p-substrate',x+bodyW/2,332,{fill:'#1b2623'});
     }
     const tapColor=pmos?palette.n:palette.p;
-    rect(svg,bx-regionW*0.3,surface,regionW*0.6,38,tapColor);
-    rect(svg,sx-regionW/2,surface,regionW,44,active);
-    rect(svg,dx-regionW/2,surface,regionW,44,active);
+    rect(svg,bx-regionW*0.3,surface,regionW*0.6,38,tapColor,region(pmos?'ntap':'ptap','B'));
+    rect(svg,sx-regionW/2,surface,regionW,44,active,region(pmos?'ps':'ns','S'));
+    rect(svg,dx-regionW/2,surface,regionW,44,active,region(pmos?'pd':'nd','D'));
     dots(svg,bx-regionW*0.3,surface,regionW*0.6,38,true,palette.bg);
     dots(svg,sx-regionW/2,surface,regionW,44,true,palette.bg);
     dots(svg,dx-regionW/2,surface,regionW,44,true,palette.bg);
     const channelLeft=sx+regionW/2,channelRight=dx-regionW/2;
     // Gate covers the entire source-to-drain channel, with a visible insulating gap.
-    rect(svg,channelLeft,surface-9,channelRight-channelLeft,9,palette.oxide);
-    rect(svg,channelLeft,surface-30,channelRight-channelLeft,20,palette.gate);
+    rect(svg,channelLeft,surface-9,channelRight-channelLeft,9,palette.oxide,region('oxide'));
+    rect(svg,channelLeft,surface-30,channelRight-channelLeft,20,palette.gate,region('poly','G'));
     if(on)rect(svg,channelLeft,surface,channelRight-channelLeft,6,active,
-      animated?{class:'channel-reveal'}:{});
+      {...region(pmos?'pchannel':'nchannel'),...(animated?{class:'channel-reveal'}:{})});
     else line(svg,channelLeft,surface+4,channelRight,surface+4,palette.ink,{'stroke-dasharray':'4 5'});
     textAt(svg,pmos?'n+ tap':'p+ tap',bx,surface+55);
     textAt(svg,pmos?'p+':'n+',sx,surface+60);
@@ -362,10 +370,11 @@
   function render3D(){
     if(!gl&&!initGL())return;
     makeGeometry();
+    if(activePart&&!boxes.some(box=>partKey(box)===activePart.key))clearSelection();
     const {matrix,project,w,h}=transform();
     pickMatrix=matrix;
     vertices=[];
-    const colorMap={},backgroundRGB=rgb(palette.bg);
+    const colorMap={},backgroundRGB=rgb(palette.bg),highlight=rgb('#ffd27a');
     for(const box of boxes)colorMap[box.id]??=rgb(material(box.id));
     const cubeFaces=[[[0,3,2,1],[0,-1,0]],[[4,5,6,7],[0,1,0]],[[0,1,5,4],[0,0,-1]],
       [[3,7,6,2],[0,0,1]],[[0,4,7,3],[-1,0,0]],[[1,2,6,5],[1,0,0]]];
@@ -374,6 +383,9 @@
         [b.x0,b.y1,b.z0],[b.x1,b.y1,b.z0],[b.x1,b.y1,b.z1],[b.x0,b.y1,b.z1]];
       let color=colorMap[b.id];
       if((state.inspect!=='all'&&state.inspect!==b.id)||(state.net!=='all'&&!selectedNet(b)))color=color.map((c,i)=>c*0.45+backgroundRGB[i]*0.55);
+      if(activePart){
+        color=partKey(b)===activePart.key?highlight:color.map((value,i)=>value*.6+backgroundRGB[i]*.4);
+      }
       for(const [ids,normal]of cubeFaces)for(const index of [ids[0],ids[1],ids[2],ids[0],ids[2],ids[3]])
         vertices.push(...points[index],...normal,...color);
     }
@@ -386,6 +398,7 @@
       const loc=gl.getAttribLocation(program,name);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,36,i*12);
     });
     gl.drawArrays(gl.TRIANGLES,0,vertices.length/9);
+    showSelection();
     svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.replaceChildren();
     if(state.net==='flow')drawFlow(project);
     refreshPartTooltip();
@@ -468,9 +481,9 @@
     textAt(art,'Oxide',490,79);textAt(art,on?'Channel formed':'No channel',300,140,{fill:'#183b32'});
     $('[data-field-note]').textContent=(p?'PMOS: a gate sufficiently below the source forms a hole channel.':'NMOS: a gate sufficiently above the source forms an electron channel.')+' Oxide insulates the gate. Its electric field changes the charge distribution in silicon. Arrows show the conceptual field direction, not carrier motion.';
   }
-  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{stop();state.view=b.dataset.view;state.inspect='all';state.net='all';update();}));
-  $$('[data-net]').forEach(b=>b.addEventListener('click',()=>{state.net=b.dataset.net;state.inspect='all';state.step=7;update();}));
-  $('[data-schematic]').addEventListener('click',e=>{if(e.target.dataset.clickNet){state.net=e.target.dataset.clickNet;state.inspect='all';state.step=7;update();}});
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>{stop();clearSelection();clearPartTooltip();state.view=b.dataset.view;state.inspect='all';state.net='all';update();}));
+  $$('[data-net]').forEach(b=>b.addEventListener('click',()=>{clearSelection();state.net=b.dataset.net;state.inspect='all';state.step=7;update();}));
+  $('[data-schematic]').addEventListener('click',e=>{if(e.target.dataset.clickNet){clearSelection();state.net=e.target.dataset.clickNet;state.inspect='all';state.step=7;update();}});
   $('[data-schematic]').addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)&&e.target.dataset.clickNet){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
   $$('[data-field-device]').forEach(b=>b.addEventListener('click',()=>{state.fieldDevice=b.dataset.fieldDevice;drawField();}));
   $$('[data-guide]').forEach(b=>b.addEventListener('click',()=>{const modes=['doping','nmos','pmos','inverter'];const i=b.dataset.guide==='start'?0:Math.min(3,modes.indexOf(state.mode)+1);$('[data-mode="'+modes[i]+'"]').click();$('[data-guide-note]').textContent=['1/4 · The + means heavier doping, not positive charge.','2/4 · NMOS: n+ source/drain in a p-body. Play the build animation.','3/4 · PMOS: p+ source/drain in an n-well. A low gate turns it on.','4/4 · Select A or Y to trace the connections between the two devices.'][i];}));
@@ -490,14 +503,18 @@
     $('[data-panel="doping"]').hidden=!doping;
     $('[data-panel="visual"]').hidden=doping||operation;
     $('[data-panel="device"]').hidden=doping||operation||(three&&state.step<7);
-    $('[data-panel="terminals"]').hidden=doping||operation;
     $('[data-panel="three"]').hidden=!three;
     $('[data-panel="legend"]').hidden=doping;
     canvas.hidden=!three;
+    visual.classList.toggle('cross-section',!three&&!doping&&!operation);
+    $('[data-model-controls]').hidden=!three;
+    if(doping||operation)clearSelection();
+    $('.lab-controls').hidden=doping||operation;
+    $('.lab-columns').classList.toggle('full-width',doping||operation);
     if(!three)clearPartTooltip();
+    showSelection();
     $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
     $$('[data-input]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.input)===state.input)));
-    $$('[data-terminal]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.terminal===state.terminal)));
     $('[data-step]').value=state.step;$('[data-inspect]').value=state.inspect;$('[data-cut]').checked=state.cut;
     $('[data-spread]').value=state.spread;$('[data-zoom]').value=state.zoom;
     $('[data-device]').value=state.device;
@@ -522,7 +539,7 @@
       }else{
         $('[data-output]').textContent=state.input?'NMOS ON · PMOS OFF · Y = 0':'PMOS ON · NMOS OFF · Y = 1';
       }
-      $('[data-note]').textContent='Drag to rotate. Hover over a part to see its name. Muted body colors indicate lighter doping; darker implants indicate heavier doping. Cutaway removes silicon to reveal embedded regions. Layer separation and dielectric are simplified.';
+      $('[data-note]').textContent='Drag to rotate. Hover to see a part’s name. Click or tap to highlight it. Muted body colors indicate lighter doping; darker implants indicate heavier doping. Cutaway removes silicon to reveal embedded regions. Layer separation and dielectric are simplified.';
       render3D();
     }else{
       deviceView(animated);$('.detail').textContent=deviceDetail();
@@ -535,12 +552,11 @@
     state.device=$('[data-device]').value;state.inspect='all';update();save();
   });
   $$('[data-visible]').forEach(c=>c.addEventListener('change',()=>{state[c.dataset.visible]=c.checked;update();save();}));
-  $$('[data-mode]').forEach(button=>button.addEventListener('click',()=>{stop();state.mode=button.dataset.mode;state.device=state.mode==='inverter'?'all':state.mode;state.view='3d';state.net='all';state.inspect='all';state.step=7;state.terminal='';update();save();}));
+  $$('[data-mode]').forEach(button=>button.addEventListener('click',()=>{stop();clearSelection();clearPartTooltip();state.mode=button.dataset.mode;state.device=state.mode==='inverter'?'all':state.mode;state.view='3d';state.net='all';state.inspect='all';state.step=7;state.terminal='';update();save();}));
   $$('[data-input]').forEach(button=>button.addEventListener('click',()=>{state.input=Number(button.dataset.input);update(true);save();}));
-  $$('[data-terminal]').forEach(button=>button.addEventListener('click',()=>{state.terminal=button.dataset.terminal;if(state.mode!=='inverter'){state.inspect='all';state.net=({S:'VDD',D:'Y',G:'A',B:'body'})[state.terminal];}else{state.inspect=state.terminal==='G'?'poly':state.terminal==='B'?'all':(state.device==='pmos'?'p':'n')+state.terminal.toLowerCase();state.net=state.terminal==='B'?'body':'all';}state.step=7;update();save();}));
   $$('[data-action]').forEach(button=>button.addEventListener('click',()=>{
     switch(button.dataset.action){
-      case 'play':if(timer)stop();else{state.step=0;state.inspect='all';state.net='all';timer=setInterval(()=>{state.step++;if(state.step===7)stop();update();save();},2300);}break;
+      case 'play':if(timer)stop();else{clearSelection();state.step=0;state.inspect='all';state.net='all';timer=setInterval(()=>{state.step++;if(state.step===7)stop();update();save();},2300);}break;
       case 'iso':state.view='3d';state.yaw=-0.35;state.pitch=0.8;state.zoom=1;break;
       case 'top':state.view='layout';state.yaw=0;state.pitch=Math.PI/2;break;
       case 'side':state.view='3d';state.yaw=0;state.pitch=0.22;break;
@@ -550,7 +566,7 @@
     $(selector).addEventListener('input',()=>{
       state[key]=key==='inspect'?$(selector).value:key==='cut'?$(selector).checked:Number($(selector).value);
       if(key==='step'){stop();state.inspect='all';}
-      if(key==='inspect'){stop();state.step=7;}
+      if(key==='inspect'){clearSelection();stop();state.step=7;}
       update();
     });$(selector).addEventListener('change',save);
   }
@@ -570,7 +586,12 @@
     if(!hoverPoint||!pickMatrix||canvas.hidden)return;
     const bounds=canvas.getBoundingClientRect();
     const x=hoverPoint[0]-bounds.left,y=hoverPoint[1]-bounds.top;
-    if(x<0||y<0||x>=bounds.width||y>=bounds.height)return;
+    const hit=pickPart(x,y,bounds);
+    if(!hit)return;
+    positionTooltip(partLabel(hit),x,y,bounds);
+  }
+  function pickPart(x,y,bounds){
+    if(!pickMatrix||x<0||y<0||x>=bounds.width||y>=bounds.height)return null;
     const matrix=pickMatrix;
     // Invert the orthographic projection along its three perpendicular axes.
     const screenX=2*x/bounds.width-1-matrix[12];
@@ -599,20 +620,70 @@
       }
       if(entry<=exit){closest=entry;hit=box;}
     }
-    if(!hit)return;
+    return hit;
+  }
+  function partLayer(box){
     const liY=.7+state.spread;
-    const layer=hit.id==='metal'?'Metal 1':hit.y0<liY?'Licon':hit.y0===liY?'Local interconnect (LI1)':'Mcon';
-    tooltip.textContent=partNames[hit.id]||layer+(hit.net?' · '+hit.net:'');
+    if(box.id==='metal')return 'Metal 1';
+    if(box.id!=='contact')return partNames[box.id]||box.id;
+    if(box.y0<liY)return 'Licon';
+    return box.y0===liY?'Local interconnect (LI1)':'Mcon';
+  }
+  function partKey(box){
+    return box.id==='contact'
+      ?[box.id,partLayer(box),box.net,box.x0,box.z0].join('|')
+      :[box.id,box.net].join('|');
+  }
+  function partLabel(box){
+    const layer=partLayer(box);
+    return (box.id==='metal'||box.id==='contact')&&box.net?layer+' · '+box.net:layer;
+  }
+  let activePart=null;
+  function showSelection(){
+    $('.part-selection').hidden=!activePart;
+    $('[data-selected-part]').textContent=activePart?'Selected · '+activePart.label:'';
+  }
+  function clearSelection(){
+    activePart=null;
+    state.terminal='';
+    showSelection();
+  }
+  $('[data-clear-part]').addEventListener('click',()=>{clearSelection();update();});
+  function selectPart(hit,terminal=''){
+    stop();
+    state.inspect='all';
+    state.net='all';
+    if(!hit||activePart?.key===partKey(hit))clearSelection();
+    else {activePart={key:partKey(hit),label:partLabel(hit)};state.terminal=terminal;}
+    showSelection();
+    update();
+    save();
+  }
+  function positionTooltip(label,x,y,bounds){
+    tooltip.textContent=label;
     tooltip.hidden=false;
     const maxX=Math.max(0,bounds.width-tooltip.offsetWidth);
     tooltip.style.left=Math.min(x+12,maxX)+'px';
     tooltip.style.top=(y+tooltip.offsetHeight+12<bounds.height?y+12:Math.max(0,y-tooltip.offsetHeight-8))+'px';
   }
+  svg.addEventListener('click',e=>{
+    if(!visual.classList.contains('cross-section'))return;
+    const id=e.target.dataset.crossPart;
+    selectPart(id?{id}:null,e.target.dataset.crossTerminal);
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(!visual.classList.contains('cross-section'))return;
+    const id=e.target.dataset.crossPart;
+    if(!id||e.pointerType==='touch'){clearPartTooltip();return;}
+    const bounds=visual.getBoundingClientRect();
+    positionTooltip(partLabel({id}),e.clientX-bounds.left,e.clientY-bounds.top,bounds);
+  });
+  svg.addEventListener('pointerleave',clearPartTooltip);
   const pointers=new Map();let pinch=null;
   canvas.addEventListener('pointerdown',e=>{
     clearPartTooltip();
-    canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);
-    if(pointers.size===2){const[a,b]=[...pointers.values()];pinch={distance:Math.hypot(a[0]-b[0],a[1]-b[1]),zoom:state.zoom};}
+    canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{start:[e.clientX,e.clientY],last:[e.clientX,e.clientY],dragged:false});
+    if(pointers.size===2){for(const pointer of pointers.values())pointer.dragged=true;const[a,b]=[...pointers.values()].map(pointer=>pointer.last);pinch={distance:Math.hypot(a[0]-b[0],a[1]-b[1]),zoom:state.zoom};}
   });
   canvas.addEventListener('pointermove',e=>{
     const previous=pointers.get(e.pointerId);
@@ -620,13 +691,27 @@
       if(e.pointerType!=='touch'){hoverPoint=[e.clientX,e.clientY];refreshPartTooltip();}
       return;
     }
-    pointers.set(e.pointerId,[e.clientX,e.clientY]);
-    if(pointers.size===2&&pinch){const[a,b]=[...pointers.values()];state.zoom=clamp(pinch.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/Math.max(1,pinch.distance),0.75,1.6);}
-    else{state.yaw+=(e.clientX-previous[0])*0.009;state.pitch=clamp(state.pitch+(e.clientY-previous[1])*0.009,0.12,Math.PI/2);}
+    const [startX,startY]=previous.start;
+    if(!previous.dragged&&Math.hypot(e.clientX-startX,e.clientY-startY)<5)return;
+    previous.dragged=true;
+    const [lastX,lastY]=previous.last;
+    previous.last=[e.clientX,e.clientY];
+    if(pointers.size===2&&pinch){const[a,b]=[...pointers.values()].map(pointer=>pointer.last);state.zoom=clamp(pinch.zoom*Math.hypot(a[0]-b[0],a[1]-b[1])/Math.max(1,pinch.distance),0.75,1.6);}
+    else{state.yaw+=(e.clientX-lastX)*0.009;state.pitch=clamp(state.pitch+(e.clientY-lastY)*0.009,0.12,Math.PI/2);}
     render3D();$('[data-zoom]').value=state.zoom;
   });
   canvas.addEventListener('pointerleave',clearPartTooltip);
-  for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,e=>{pointers.delete(e.pointerId);pinch=null;save();});
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,e=>{
+    const pointer=pointers.get(e.pointerId);
+    pointers.delete(e.pointerId);
+    pinch=null;
+    if(type==='pointerup'&&pointer&&!pointer.dragged&&e.button===0){
+      const bounds=canvas.getBoundingClientRect();
+      selectPart(pickPart(e.clientX-bounds.left,e.clientY-bounds.top,bounds));
+    }
+    save();
+  });
+  root.addEventListener('keydown',e=>{if(e.key==='Escape'&&activePart){clearSelection();update();}});
   canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*0.001),0.75,1.6);render3D();$('[data-zoom]').value=state.zoom;save();},{passive:false});
   new ResizeObserver(()=>update()).observe(visual);
   new MutationObserver(()=>{colorTheme();update();}).observe(document.documentElement,{attributes:true,attributeFilter:['style','class','data-theme']});
